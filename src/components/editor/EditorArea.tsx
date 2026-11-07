@@ -10,7 +10,8 @@ import {
   File,
   Plus,
   Sparkles,
-  Play,
+  SplitSquareHorizontal,
+  MoreHorizontal,
 } from "lucide-react";
 import { useIDE } from "@/context/IDEContext";
 import MonacoWrapper from "./MonacoWrapper";
@@ -23,7 +24,6 @@ export default function EditorArea() {
     closeTab,
     openFile,
     updateFileContent,
-    runProject,
     setIsAIPanelOpen,
     createFile,
   } = useIDE();
@@ -31,74 +31,100 @@ export default function EditorArea() {
   const getFileIcon = (filename: string) => {
     const ext = filename.split(".").pop()?.toLowerCase();
     switch (ext) {
-      case "ts":
       case "tsx":
-      case "js":
       case "jsx":
-      case "py":
-        return <FileCode size={13} className="text-blue-400 shrink-0" />;
+        return <FileCode size={13} className="text-[#3B82F6] shrink-0" />;
+      case "ts":
+      case "js":
+        return <FileCode size={13} className="text-[#3B82F6] shrink-0" />;
       case "json":
         return <FileJson size={13} className="text-amber-400 shrink-0" />;
       case "html":
       case "css":
         return <FileCode size={13} className="text-emerald-400 shrink-0" />;
+      case "py":
+        return <FileCode size={13} className="text-blue-400 shrink-0" />;
       case "md":
         return <FileText size={13} className="text-purple-400 shrink-0" />;
       default:
-        return <File size={13} className="text-zinc-400 shrink-0" />;
+        return <File size={13} className="text-[#858585] shrink-0" />;
     }
   };
 
   const breadcrumbs = activeFile ? activeFile.path.split("/").filter(Boolean) : [];
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-ide-editor overflow-hidden select-none">
+    <div className="flex-1 flex flex-col h-full bg-[#1E1E1E] overflow-hidden select-none font-sans">
       {/* Editor Tabs Bar */}
-      <div className="h-9 bg-ide-sidebar border-b border-ide-border flex items-center overflow-x-auto scrollbar-none">
-        {openTabs.map((tab) => {
-          const isActive = activeTabId === tab.id;
-          return (
-            <div
-              key={tab.id}
-              onClick={() => openFile(tab.filePath)}
-              className={`group h-full flex items-center gap-2 px-3 border-r border-ide-border text-xs cursor-pointer transition-colors relative min-w-[120px] max-w-[200px] ${
-                isActive
-                  ? "bg-ide-editor text-white font-medium"
-                  : "bg-ide-sidebar text-zinc-400 hover:bg-ide-hover hover:text-zinc-200"
-              }`}
-            >
-              {isActive && (
-                <div className="absolute top-0 left-0 right-0 h-0.5 bg-blue-500" />
-              )}
-              {getFileIcon(tab.name)}
-              <span className="truncate flex-1">{tab.name}</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeTab(tab.id);
-                }}
-                title="Close Tab"
-                className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-zinc-700/60 rounded text-zinc-400 hover:text-white transition-opacity"
+      <div className="h-[32px] bg-[#181818] border-b border-[#282828] flex items-center justify-between overflow-x-auto scrollbar-none">
+        <div className="flex items-center h-full overflow-x-auto scrollbar-none">
+          {openTabs.map((tab) => {
+            const isActive = activeTabId === tab.id;
+            return (
+              <div
+                key={tab.id}
+                onClick={() => openFile(tab.filePath)}
+                className={`group h-full flex items-center gap-1.5 px-3 border-r border-[#282828] text-[12px] cursor-pointer transition-colors relative min-w-[120px] max-w-[210px] ${
+                  isActive
+                    ? "bg-[#1E1E1E] text-white font-medium border-t-2 border-[#10B981]"
+                    : "bg-[#181818] text-[#858585] hover:bg-[#1E1E1E]/50 hover:text-[#CCCCCC]"
+                }`}
               >
-                <X size={12} />
-              </button>
-            </div>
-          );
-        })}
+                {getFileIcon(tab.name)}
+                <span className="truncate flex-1">{tab.name}</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    closeTab(tab.id);
+                  }}
+                  title="Close Tab"
+                  className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-[#333333] rounded text-[#858585] hover:text-white transition-opacity"
+                >
+                  <X size={11} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Right side of tabs strip (Chat chips and split view icons like in screenshot) */}
+        <div className="flex items-center gap-1.5 pr-2 shrink-0">
+          <div
+            onClick={() => setIsAIPanelOpen(true)}
+            title="Open AI Chat Context"
+            className="px-2 py-0.5 rounded-full bg-[#242428] hover:bg-[#2E2E34] text-[11px] text-[#A1A1AA] hover:text-white cursor-pointer flex items-center gap-1 border border-[#333338]"
+          >
+            <span>hi</span>
+          </div>
+
+          <button
+            title="Split Editor Right"
+            className="p-1 text-[#858585] hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors"
+          >
+            <SplitSquareHorizontal size={13} />
+          </button>
+          <button
+            title="More Options"
+            className="p-1 text-[#858585] hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors"
+          >
+            <MoreHorizontal size={13} />
+          </button>
+        </div>
       </div>
 
-      {/* Breadcrumbs */}
+      {/* Breadcrumbs Bar */}
       {activeFile && (
-        <div className="h-6 px-4 bg-ide-editor border-b border-ide-border/50 flex items-center gap-1 text-[11px] text-zinc-400">
-          <span className="text-zinc-500">workspace</span>
+        <div className="h-[22px] px-3 bg-[#1E1E1E] border-b border-[#282828]/60 flex items-center gap-1 text-[11px] text-[#858585]">
+          <span className="text-[#666666]">workspace</span>
           {breadcrumbs.map((crumb, idx) => (
             <React.Fragment key={idx}>
-              <ChevronRight size={11} className="text-zinc-600" />
-              <span className={idx === breadcrumbs.length - 1 ? "text-zinc-200 font-medium" : ""}>
+              <ChevronRight size={10} className="text-[#555555]" />
+              <span className={idx === breadcrumbs.length - 1 ? "text-[#CCCCCC] font-medium" : ""}>
                 {crumb}
               </span>
             </React.Fragment>
           ))}
+          <span className="text-[#555555] ml-1">...</span>
         </div>
       )}
 
@@ -112,28 +138,28 @@ export default function EditorArea() {
             onChange={(newContent) => updateFileContent(activeFile.path, newContent)}
           />
         ) : (
-          <div className="h-full flex flex-col items-center justify-center text-zinc-500 p-6 text-center select-none">
-            <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 mb-3">
-              <FileCode size={24} strokeWidth={1.5} />
+          <div className="h-full flex flex-col items-center justify-center text-[#858585] p-6 text-center select-none">
+            <div className="w-10 h-10 rounded-xl bg-[#252526] border border-[#333333] flex items-center justify-center text-[#858585] mb-2.5">
+              <FileCode size={20} strokeWidth={1.5} />
             </div>
-            <h3 className="text-sm font-semibold text-zinc-300">No File Currently Open</h3>
-            <p className="text-xs text-zinc-500 max-w-xs mt-1">
-              Select a file from the explorer on the left or create a new file to start coding.
+            <h3 className="text-xs font-semibold text-[#CCCCCC]">No File Open</h3>
+            <p className="text-[11px] text-[#858585] max-w-xs mt-0.5">
+              Select a file from the explorer on the left or create a new component.
             </p>
-            <div className="flex items-center gap-2 mt-4">
+            <div className="flex items-center gap-2 mt-3">
               <button
-                onClick={() => createFile("/src", "Component.tsx", "file")}
-                className="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium flex items-center gap-1.5 transition-colors"
+                onClick={() => createFile("/src", "App.tsx", "file")}
+                className="px-2.5 py-1 rounded bg-[#3B82F6] hover:bg-blue-500 text-white text-[11px] font-medium flex items-center gap-1.5 transition-colors"
               >
-                <Plus size={13} strokeWidth={2} />
+                <Plus size={12} strokeWidth={2} />
                 <span>New File</span>
               </button>
               <button
                 onClick={() => setIsAIPanelOpen(true)}
-                className="px-3 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium flex items-center gap-1.5 transition-colors"
+                className="px-2.5 py-1 rounded bg-[#2A2D32] hover:bg-[#33373E] text-[#CCCCCC] text-[11px] font-medium flex items-center gap-1.5 transition-colors"
               >
-                <Sparkles size={13} className="text-blue-400" />
-                <span>Ask AI Assistant</span>
+                <Sparkles size={11} className="text-[#3B82F6]" />
+                <span>Ask AI Agent</span>
               </button>
             </div>
           </div>
@@ -142,4 +168,3 @@ export default function EditorArea() {
     </div>
   );
 }
-

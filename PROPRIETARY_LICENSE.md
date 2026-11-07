@@ -59,3 +59,4 @@ THE SOFTWARE.
 For licensing inquiries, commercial partnerships, or permissions, contact:
 [OWNER / COMPANY NAME] — legal@[YOUR-DOMAIN].com
 ================================================================================
+

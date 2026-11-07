@@ -79,6 +79,7 @@ interface IDEContextType {
   providers: Record<AIProviderId, AIProviderConfig>;
   updateProviderConfig: (id: AIProviderId, updates: Partial<AIProviderConfig>) => void;
   chatMessages: ChatMessage[];
+  clearChatMessages: () => void;
   isAILoading: boolean;
   sendAIMessage: (prompt: string, mode?: AIMode) => Promise<void>;
   tokenStats: TokenUsageStats;
@@ -192,6 +193,9 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
   const [providers, setProviders] = useState<Record<AIProviderId, AIProviderConfig>>(DEFAULT_AI_PROVIDERS);
   const [settings, setSettings] = useState<IDESettings>(DEFAULT_SETTINGS);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const clearChatMessages = useCallback(() => {
+    setChatMessages([]);
+  }, []);
   const [isAILoading, setIsAILoading] = useState<boolean>(false);
   const [tokenStats, setTokenStats] = useState<TokenUsageStats>({
     totalPromptTokens: 140,
@@ -807,6 +811,7 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
         providers,
         updateProviderConfig,
         chatMessages,
+        clearChatMessages,
         isAILoading,
         sendAIMessage,
         tokenStats,

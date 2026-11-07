@@ -8,14 +8,20 @@ import {
   Mic,
   MicOff,
   Square,
-  ArrowUp,
   X,
   FileCode,
   Check,
   ArrowUpCircle,
   Gauge,
   Bell,
-  Paperclip,
+  Code2,
+  BookOpen,
+  Bug,
+  PlusCircle,
+  MessageSquare,
+  Bot,
+  RotateCcw,
+  Plus,
 } from "lucide-react";
 import { useIDE } from "@/context/IDEContext";
 import { AIMode, AIProviderId, FileItem } from "@/types/ide";
@@ -64,7 +70,9 @@ const SLASH_COMMANDS: SlashCommand[] = [
 export default function AIAssistantPanel() {
   const {
     isAIPanelOpen,
+    toggleAIPanel,
     chatMessages,
+    clearChatMessages,
     isAILoading,
     sendAIMessage,
     activeFile,
@@ -78,6 +86,7 @@ export default function AIAssistantPanel() {
 
   const [inputPrompt, setInputPrompt] = useState("");
   const [mode, setMode] = useState<AIMode>("agent");
+  const [activeTab, setActiveTab] = useState<"agent" | "chat">("agent");
   const [isModeDropdownOpen, setIsModeDropdownOpen] = useState(false);
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [isSlashMenuOpen, setIsSlashMenuOpen] = useState(false);
@@ -224,13 +233,12 @@ export default function AIAssistantPanel() {
     setAttachedFiles((prev) => prev.filter((item) => item.path !== path));
   };
 
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    const promptText = inputPrompt.trim();
+  const handleSubmit = (customPrompt?: string, targetMode?: AIMode) => {
+    const promptText = (customPrompt || inputPrompt).trim();
     if (!promptText || isAILoading) return;
 
     let finalPrompt = promptText;
-    let finalMode = mode;
+    let finalMode = targetMode || mode;
 
     for (const cmd of SLASH_COMMANDS) {
       if (promptText.startsWith(cmd.command)) {
@@ -284,28 +292,138 @@ export default function AIAssistantPanel() {
   };
 
   return (
-    <div className="w-80 md:w-96 bg-[#121214] border-l border-zinc-800/60 flex flex-col h-full shrink-0 select-none overflow-hidden z-20 font-sans">
-      {/* ZERO top bar, ZERO headers — pure, clean Qoder stream */}
-
-      {/* 1. Chat Message Stream */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {chatMessages.map((msg) => (
-          <AIChatMessage key={msg.id} message={msg} />
-        ))}
-
-        {isAILoading && (
-          <div className="flex items-center gap-2 text-xs text-zinc-400 py-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Agent is working...</span>
+    <div className="w-full h-full bg-[#141416] border-l border-[#282828] flex flex-col select-none overflow-hidden z-20 font-sans">
+      {/* 1. Header with exact Qoder-style Pill [ ✨ Ela AI ] + Purple [ AGENT ] Badge */}
+      <div className="h-[36px] px-3 bg-[#181818] border-b border-[#282828] flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2">
+          {/* [ ✨ Ela AI ] Pill matching Image 1 */}
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1F1F23] border border-[#38383F] text-[11.5px] font-medium text-[#E4E4E7] shadow-sm select-none">
+            <Sparkles size={12} className="text-[#60A5FA]" />
+            <span>Ela AI</span>
           </div>
+
+          {/* [ AGENT ] Purple Badge matching Image 1 */}
+          <button
+            onClick={() => {
+              const nextMode = mode === "agent" ? "chat" : "agent";
+              setMode(nextMode);
+              setActiveTab(nextMode);
+            }}
+            title="Click to toggle between Agent and Chat mode"
+            className={`px-2 py-0.5 rounded-[5px] text-[10px] font-bold tracking-wider uppercase transition-all select-none border shadow-sm ${
+              mode === "agent"
+                ? "bg-[#2A1647] border-[#7C3AED] text-[#C4B5FD] hover:bg-[#3B1F63]"
+                : "bg-emerald-950/70 border-emerald-600/80 text-emerald-300 hover:bg-emerald-900"
+            }`}
+          >
+            {mode === "agent" ? "AGENT" : "CHAT"}
+          </button>
+        </div>
+
+        {/* Panel Actions */}
+        <div className="flex items-center gap-1 text-[#858585]">
+          <button
+            onClick={() => clearChatMessages()}
+            title="New Chat Session"
+            className="p-1 rounded hover:text-white hover:bg-[#2A2D32] transition-colors"
+          >
+            <Plus size={13} />
+          </button>
+          <button
+            onClick={toggleAIPanel}
+            title="Collapse Assistant (Ctrl+Shift+A)"
+            className="p-1 rounded hover:text-white hover:bg-[#2A2D32] transition-colors"
+          >
+            <X size={13} />
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Chat Message Stream or Minimal Welcome State */}
+      <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5">
+        {chatMessages.length === 0 ? (
+          <div className="h-full flex flex-col justify-end pb-4 space-y-3">
+            <div className="space-y-1">
+              <span className="text-[11px] font-semibold text-[#858585] uppercase tracking-wider block">
+                Quick Actions
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-1.5">
+              <button
+                onClick={() =>
+                  handleSubmit(
+                    `Generate a modern, clean component for ${activeFile?.name || "the project"}`,
+                    "agent"
+                  )
+                }
+                className="p-2 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[11px] text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-1.5 group"
+              >
+                <Code2 size={13} className="text-[#3B82F6] shrink-0" />
+                <span className="truncate">Generate Code</span>
+              </button>
+
+              <button
+                onClick={() =>
+                  handleSubmit(
+                    `Explain the architecture and flow of ${activeFile?.name || "this file"} in detail`,
+                    "explain"
+                  )
+                }
+                className="p-2 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[11px] text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-1.5 group"
+              >
+                <BookOpen size={13} className="text-amber-400 shrink-0" />
+                <span className="truncate">Explain File</span>
+              </button>
+
+              <button
+                onClick={() =>
+                  handleSubmit(
+                    `Scan ${activeFile?.name || "workspace"} for potential bugs, edge cases, and performance bottlenecks`,
+                    "bugfix"
+                  )
+                }
+                className="p-2 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[11px] text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-1.5 group"
+              >
+                <Bug size={13} className="text-rose-400 shrink-0" />
+                <span className="truncate">Find & Fix Issues</span>
+              </button>
+
+              <button
+                onClick={() =>
+                  handleSubmit(
+                    `Add a new feature and tests to ${activeFile?.name || "current project"}`,
+                    "agent"
+                  )
+                }
+                className="p-2 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[11px] text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-1.5 group"
+              >
+                <PlusCircle size={13} className="text-emerald-400 shrink-0" />
+                <span className="truncate">Add New Feature</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {chatMessages.map((msg) => (
+              <AIChatMessage key={msg.id} message={msg} />
+            ))}
+
+            {isAILoading && (
+              <div className="flex items-center gap-2 text-xs text-zinc-400 py-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[11px]">Agent is thinking & writing code...</span>
+              </div>
+            )}
+          </>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 2. Slash Commands Menu Popup */}
+      {/* 3. Slash Commands Popup */}
       {isSlashMenuOpen && (
-        <div className="mx-4 mb-2 bg-[#1a1a1e] border border-zinc-800 rounded-xl shadow-2xl p-1.5 space-y-0.5 text-xs z-30">
-          <div className="px-2 py-1 text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">
+        <div className="mx-3 mb-2 bg-[#1C1C20] border border-[#303030] rounded-xl shadow-2xl p-1.5 space-y-0.5 text-xs z-30">
+          <div className="px-2 py-0.5 text-[10px] uppercase font-semibold text-[#858585] tracking-wider">
             Commands
           </div>
           {SLASH_COMMANDS.map((cmd, idx) => (
@@ -314,62 +432,62 @@ export default function AIAssistantPanel() {
               onClick={() => applySlashCommand(cmd)}
               onMouseEnter={() => setSelectedSlashIndex(idx)}
               className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${
-                selectedSlashIndex === idx ? "bg-zinc-800 text-white" : "text-zinc-300 hover:bg-zinc-800/60"
+                selectedSlashIndex === idx ? "bg-[#2A2D32] text-white" : "text-[#CCCCCC] hover:bg-[#26262B]"
               }`}
             >
               <div className="flex items-center gap-2">
                 <span className="font-mono text-emerald-400 font-semibold">{cmd.command}</span>
-                <span className="text-zinc-400 text-[11px] truncate">{cmd.description}</span>
+                <span className="text-[#858585] text-[11px] truncate">{cmd.description}</span>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* 3. File Context (@) Menu Popup */}
+      {/* 4. File Context (@) Menu Popup */}
       {isFilePickerOpen && (
-        <div className="mx-4 mb-2 bg-[#1a1a1e] border border-zinc-800 rounded-xl shadow-2xl p-1.5 max-h-48 overflow-y-auto space-y-0.5 text-xs z-30">
-          <div className="px-2 py-1 text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">
+        <div className="mx-3 mb-2 bg-[#1C1C20] border border-[#303030] rounded-xl shadow-2xl p-1.5 max-h-48 overflow-y-auto space-y-0.5 text-xs z-30">
+          <div className="px-2 py-0.5 text-[10px] uppercase font-semibold text-[#858585] tracking-wider">
             Workspace Files
           </div>
           {allWorkspaceFiles.map((f) => (
             <div
               key={f.path}
               onClick={() => attachFile(f)}
-              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer text-zinc-300 hover:bg-zinc-800 transition-colors font-mono text-[11px]"
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer text-[#CCCCCC] hover:bg-[#2A2D32] transition-colors font-mono text-[11px]"
             >
-              <FileCode size={12} className="text-blue-400 shrink-0" />
+              <FileCode size={12} className="text-[#3B82F6] shrink-0" />
               <span className="truncate">{f.path}</span>
             </div>
           ))}
         </div>
       )}
 
-      {/* 4. Qoder Composer Input Container */}
-      <div className="px-3 pb-1">
-        <div className="bg-[#18181b] rounded-2xl p-3 border border-zinc-800/80 shadow-lg focus-within:border-zinc-700 transition-all">
+      {/* 5. Fixed Bottom Composer Container (Exact match to screenshot) */}
+      <div className="px-2.5 pb-1">
+        <div className="bg-[#18181B] rounded-xl p-2.5 border border-[#2D2D32] shadow-lg focus-within:border-[#3E3E46] transition-all">
           {/* Attached Files Chips */}
           {attachedFiles.length > 0 && (
-            <div className="flex items-center gap-1.5 flex-wrap pb-2 mb-2 border-b border-zinc-800/60">
+            <div className="flex items-center gap-1.5 flex-wrap pb-1.5 mb-1.5 border-b border-[#282828]">
               {attachedFiles.map((file) => (
                 <div
                   key={file.path}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-800/80 text-[11px] text-zinc-300 font-mono"
+                  className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#252528] text-[10.5px] text-[#CCCCCC] font-mono"
                 >
-                  <FileCode size={11} className="text-blue-400 shrink-0" />
-                  <span className="truncate max-w-[120px]">{file.name}</span>
+                  <FileCode size={11} className="text-[#3B82F6] shrink-0" />
+                  <span className="truncate max-w-[110px]">{file.name}</span>
                   <button
                     onClick={() => removeAttachedFile(file.path)}
-                    className="p-0.5 hover:text-white text-zinc-500"
+                    className="p-0.5 hover:text-white text-[#858585]"
                   >
-                    <X size={10} />
+                    <X size={9} />
                   </button>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Clean Composer Textarea */}
+          {/* Textarea */}
           <textarea
             ref={textareaRef}
             value={inputPrompt}
@@ -377,35 +495,35 @@ export default function AIAssistantPanel() {
             onKeyDown={handleKeyDown}
             placeholder="Ask for follow up changes"
             rows={2}
-            className="w-full bg-transparent text-xs text-zinc-200 placeholder-zinc-500 outline-none resize-none font-sans leading-relaxed scrollbar-none"
+            className="w-full bg-transparent text-[12px] text-[#E4E4E7] placeholder-[#66666A] outline-none resize-none font-sans leading-relaxed scrollbar-none"
           />
 
-          {/* Controls Bar */}
-          <div className="flex items-center justify-between pt-2">
-            {/* Left Controls: [ Ꝏ Agent ⌄ ] and [ Auto ⌄ ] */}
+          {/* Controls Bar inside Composer */}
+          <div className="flex items-center justify-between pt-1.5">
+            {/* Left: Mode pill and Model pill */}
             <div className="flex items-center gap-1.5">
-              {/* Mode Selector Pill: Ꝏ Agent ⌄ */}
+              {/* [ Ꝏ Agent ⌄ ] */}
               <div className="relative" ref={modeDropdownRef}>
                 <button
                   type="button"
                   onClick={() => setIsModeDropdownOpen((v) => !v)}
-                  className="h-7 px-2.5 rounded-lg bg-[#27272a]/70 hover:bg-[#27272a] text-zinc-300 text-xs font-medium flex items-center gap-1.5 transition-colors border border-zinc-700/40"
+                  className="h-6 px-2 rounded-md bg-[#242428] hover:bg-[#2C2C30] text-[#CCCCCC] text-[11px] font-medium flex items-center gap-1 transition-colors border border-[#333338]"
                 >
-                  <InfinityIcon size={13} className="text-zinc-400" />
+                  <InfinityIcon size={12} className="text-[#858585]" />
                   <span className="capitalize">{mode === "agent" ? "Agent" : "Chat"}</span>
-                  <ChevronDown size={11} className="text-zinc-500" />
+                  <ChevronDown size={10} className="text-[#858585]" />
                 </button>
 
                 {isModeDropdownOpen && (
-                  <div className="absolute left-0 bottom-full mb-1.5 w-36 bg-[#1a1a1e] border border-zinc-800 rounded-xl shadow-2xl p-1 text-xs space-y-0.5 z-40">
+                  <div className="absolute left-0 bottom-full mb-1 w-32 bg-[#1C1C20] border border-[#303030] rounded-xl shadow-2xl p-1 text-xs space-y-0.5 z-40">
                     <button
                       type="button"
                       onClick={() => {
                         setMode("agent");
                         setIsModeDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
-                        mode === "agent" ? "bg-zinc-800 text-white font-medium" : "text-zinc-300 hover:bg-zinc-800/60"
+                      className={`w-full text-left px-2 py-1 rounded-lg flex items-center justify-between ${
+                        mode === "agent" ? "bg-[#2A2D32] text-white" : "text-[#CCCCCC] hover:bg-[#26262B]"
                       }`}
                     >
                       <span>Agent</span>
@@ -417,8 +535,8 @@ export default function AIAssistantPanel() {
                         setMode("chat");
                         setIsModeDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
-                        mode === "chat" ? "bg-zinc-800 text-white font-medium" : "text-zinc-300 hover:bg-zinc-800/60"
+                      className={`w-full text-left px-2 py-1 rounded-lg flex items-center justify-between ${
+                        mode === "chat" ? "bg-[#2A2D32] text-white" : "text-[#CCCCCC] hover:bg-[#26262B]"
                       }`}
                     >
                       <span>Chat</span>
@@ -428,20 +546,20 @@ export default function AIAssistantPanel() {
                 )}
               </div>
 
-              {/* Model Selector Pill: Auto ⌄ */}
+              {/* [ Auto ⌄ ] */}
               <div className="relative" ref={modelDropdownRef}>
                 <button
                   type="button"
                   onClick={() => setIsModelDropdownOpen((v) => !v)}
-                  className="h-7 px-2.5 rounded-lg bg-[#27272a]/70 hover:bg-[#27272a] text-zinc-300 text-xs font-medium flex items-center gap-1.5 transition-colors border border-zinc-700/40 max-w-[140px] truncate"
+                  className="h-6 px-1.5 rounded-md hover:bg-[#242428] text-[#858585] hover:text-[#CCCCCC] text-[11px] font-medium flex items-center gap-1 transition-colors max-w-[130px] truncate"
                 >
                   <span className="truncate">{activeProvider?.selectedModel ? activeProvider.selectedModel.split("/").pop() : "Auto"}</span>
-                  <ChevronDown size={11} className="text-zinc-500 shrink-0" />
+                  <ChevronDown size={10} className="text-[#858585] shrink-0" />
                 </button>
 
                 {isModelDropdownOpen && (
-                  <div className="absolute left-0 bottom-full mb-1.5 w-64 bg-[#1a1a1e] border border-zinc-800 rounded-xl shadow-2xl p-1.5 max-h-56 overflow-y-auto space-y-0.5 text-xs z-50">
-                    <div className="px-2 py-1 text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">
+                  <div className="absolute left-0 bottom-full mb-1 w-64 bg-[#1C1C20] border border-[#303030] rounded-xl shadow-2xl p-1.5 max-h-56 overflow-y-auto space-y-0.5 text-xs z-50">
+                    <div className="px-2 py-0.5 text-[10px] uppercase font-semibold text-[#858585] tracking-wider">
                       Available Models
                     </div>
                     {allAvailableModels.map((item, idx) => {
@@ -454,12 +572,12 @@ export default function AIAssistantPanel() {
                           key={`${item.providerId}-${item.model}-${idx}`}
                           onClick={() => handleModelSelect(item.providerId, item.model)}
                           className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${
-                            isSelected ? "bg-zinc-800 text-white" : "text-zinc-300 hover:bg-zinc-800/60"
+                            isSelected ? "bg-[#2A2D32] text-white" : "text-[#CCCCCC] hover:bg-[#26262B]"
                           }`}
                         >
                           <div className="truncate min-w-0 pr-1">
                             <span className="truncate font-mono text-[11px] block">{item.model}</span>
-                            <span className="text-[10px] text-zinc-500 block">{item.providerName}</span>
+                            <span className="text-[10px] text-[#858585] block">{item.providerName}</span>
                           </div>
                           <div className="flex items-center gap-1 shrink-0">
                             {item.isFree && (
@@ -467,7 +585,7 @@ export default function AIAssistantPanel() {
                                 FREE
                               </span>
                             )}
-                            {isSelected && <Check size={11} strokeWidth={2.5} />}
+                            {isSelected && <Check size={11} />}
                           </div>
                         </div>
                       );
@@ -477,15 +595,15 @@ export default function AIAssistantPanel() {
               </div>
             </div>
 
-            {/* Right Controls: Sparkle, Mic, and Green Square Button */}
-            <div className="flex items-center gap-2">
+            {/* Right: Sparkles, Mic, Emerald Action Square */}
+            <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={() => setIsFilePickerOpen((v) => !v)}
-                title="Attach context (@)"
-                className="text-zinc-500 hover:text-zinc-300 transition-colors p-1"
+                title="Attach workspace context (@)"
+                className="text-[#858585] hover:text-[#CCCCCC] transition-colors p-1"
               >
-                <Sparkles size={14} />
+                <Sparkles size={13} />
               </button>
 
               <button
@@ -493,30 +611,30 @@ export default function AIAssistantPanel() {
                 onClick={toggleSpeech}
                 title={isListening ? "Listening... click to stop" : "Voice input"}
                 className={`p-1 transition-colors ${
-                  isListening ? "text-rose-400 animate-pulse" : "text-zinc-500 hover:text-zinc-300"
+                  isListening ? "text-rose-400 animate-pulse" : "text-[#858585] hover:text-[#CCCCCC]"
                 }`}
               >
-                {isListening ? <MicOff size={14} /> : <Mic size={14} />}
+                {isListening ? <MicOff size={13} /> : <Mic size={13} />}
               </button>
 
-              {/* Exact Qoder Green Action Button */}
+              {/* Exact Green Square Action Button from Screenshot */}
               {isAILoading ? (
                 <button
                   type="button"
-                  title="Stop generating"
-                  className="w-7 h-7 rounded-lg bg-emerald-500 hover:bg-emerald-400 flex items-center justify-center transition-colors shadow-sm"
+                  title="Stop generation"
+                  className="w-6 h-6 rounded-md bg-[#10B981] hover:bg-emerald-400 flex items-center justify-center transition-colors shadow-sm"
                 >
-                  <Square size={9} className="text-black" fill="currentColor" />
+                  <Square size={8} className="text-black" fill="currentColor" />
                 </button>
               ) : (
                 <button
                   type="button"
-                  onClick={handleSubmit}
+                  onClick={() => handleSubmit()}
                   disabled={!inputPrompt.trim()}
                   title="Submit (Enter)"
-                  className="w-7 h-7 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-30 disabled:hover:bg-emerald-500 flex items-center justify-center transition-colors shadow-sm"
+                  className="w-6 h-6 rounded-md bg-[#10B981] hover:bg-emerald-400 disabled:opacity-30 disabled:hover:bg-[#10B981] flex items-center justify-center transition-colors shadow-sm"
                 >
-                  <Square size={9} className="text-black" fill="currentColor" />
+                  <Square size={8} className="text-black" fill="currentColor" />
                 </button>
               )}
             </div>
@@ -524,32 +642,32 @@ export default function AIAssistantPanel() {
         </div>
       </div>
 
-      {/* 5. Minimal Qoder Bottom Status Bar */}
-      <div className="h-6 px-3 flex items-center justify-between text-[11px] text-zinc-500 border-t border-zinc-900 bg-[#121214] select-none">
-        <div className="flex items-center gap-1 hover:text-zinc-300 cursor-pointer text-[10px]">
+      {/* 6. Status line under composer (Exact match to screenshot) */}
+      <div className="h-[22px] px-3 flex items-center justify-between text-[10.5px] text-[#666666] border-t border-[#242426] bg-[#141416] select-none">
+        <div className="flex items-center gap-1 hover:text-[#CCCCCC] cursor-pointer">
           <span>⇥ NEXT</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => updateSettings({ activeProviderId: "groq" })}
-            title="Fast Free Models Active"
-            className="flex items-center gap-1 hover:text-zinc-300 transition-colors"
+            title="Free Tier Active"
+            className="flex items-center gap-1 hover:text-[#CCCCCC] transition-colors"
           >
-            <ArrowUpCircle size={11} className="text-zinc-400" />
-            <span>Free - Upgrade</span>
+            <ArrowUpCircle size={10} className="text-[#666666]" />
+            <span>Pro Trial - Upgrade</span>
           </button>
 
           <div
             title={`Token Usage: ${tokenStats.totalPromptTokens + tokenStats.totalCompletionTokens} tokens`}
-            className="flex items-center gap-1 hover:text-zinc-300 cursor-help"
+            className="flex items-center gap-1 hover:text-[#CCCCCC] cursor-help"
           >
-            <Gauge size={11} className="text-zinc-400" />
-            <span>Usage</span>
+            <Gauge size={10} className="text-[#666666]" />
+            <span>Usage - 100%</span>
           </div>
 
-          <button title="Notifications" className="hover:text-zinc-300 transition-colors">
-            <Bell size={11} />
+          <button title="Notifications" className="hover:text-[#CCCCCC] transition-colors">
+            <Bell size={10} />
           </button>
         </div>
       </div>

@@ -7,7 +7,6 @@ import {
   FileText,
   Monitor,
   X,
-  ChevronDown,
 } from "lucide-react";
 import { useIDE } from "@/context/IDEContext";
 import { BottomPanelTab } from "@/types/ide";
@@ -16,7 +15,7 @@ import ProblemsPanel from "@/components/panels/ProblemsPanel";
 import OutputPanel from "@/components/panels/OutputPanel";
 import WebPreviewModal from "@/components/preview/WebPreviewModal";
 
-export default function BottomPanel() {
+export default function BottomPanel({ height = 200 }: { height?: number }) {
   const {
     isBottomOpen,
     setIsBottomOpen,
@@ -30,21 +29,24 @@ export default function BottomPanel() {
   const errorCount = problems.filter((p) => p.severity === "error").length;
 
   const tabs: { id: BottomPanelTab; label: string; icon: React.ReactNode; badge?: number }[] = [
-    { id: "terminal", label: "Terminal", icon: <Terminal size={13} strokeWidth={1.75} /> },
-    { id: "output", label: "Output", icon: <FileText size={13} strokeWidth={1.75} /> },
+    { id: "terminal", label: "Terminal", icon: <Terminal size={12} strokeWidth={1.75} /> },
+    { id: "output", label: "Output", icon: <FileText size={12} strokeWidth={1.75} /> },
     {
       id: "problems",
       label: "Problems",
-      icon: <AlertCircle size={13} strokeWidth={1.75} />,
+      icon: <AlertCircle size={12} strokeWidth={1.75} />,
       badge: errorCount > 0 ? errorCount : undefined,
     },
-    { id: "preview", label: "Live Preview", icon: <Monitor size={13} strokeWidth={1.75} /> },
+    { id: "preview", label: "Live Preview", icon: <Monitor size={12} strokeWidth={1.75} /> },
   ];
 
   return (
-    <div className="h-64 bg-ide-panel border-t border-ide-border flex flex-col shrink-0 select-none z-10">
+    <div
+      style={{ height: `${height}px` }}
+      className="bg-[#181818] border-t border-[#282828] flex flex-col shrink-0 select-none z-10 font-sans"
+    >
       {/* Panel header tabs */}
-      <div className="h-7 bg-ide-sidebar border-b border-ide-border flex items-center justify-between px-2 text-xs">
+      <div className="h-[28px] bg-[#181818] border-b border-[#282828] flex items-center justify-between px-2 text-[11px]">
         <div className="flex items-center gap-1">
           {tabs.map((tab) => {
             const isActive = bottomPanelTab === tab.id;
@@ -52,16 +54,16 @@ export default function BottomPanel() {
               <button
                 key={tab.id}
                 onClick={() => setBottomPanelTab(tab.id)}
-                className={`h-7 px-3 flex items-center gap-1.5 font-medium transition-colors border-b-2 ${
+                className={`h-[28px] px-2.5 flex items-center gap-1.5 font-medium transition-colors border-b-2 ${
                   isActive
-                    ? "border-blue-500 text-white bg-ide-panel"
-                    : "border-transparent text-zinc-400 hover:text-zinc-200"
+                    ? "border-[#3B82F6] text-white bg-[#1E1E1E]"
+                    : "border-transparent text-[#858585] hover:text-[#CCCCCC]"
                 }`}
               >
                 {tab.icon}
                 <span>{tab.label}</span>
                 {tab.badge !== undefined && (
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-rose-500/20 text-rose-300 font-bold">
+                  <span className="text-[9px] px-1 py-0.2 rounded-full bg-rose-500/20 text-rose-300 font-bold">
                     {tab.badge}
                   </span>
                 )}
@@ -71,13 +73,13 @@ export default function BottomPanel() {
         </div>
 
         {/* Panel controls */}
-        <div className="flex items-center gap-1 text-zinc-400">
+        <div className="flex items-center gap-1 text-[#858585]">
           <button
             onClick={() => setIsBottomOpen(false)}
             title="Close Panel"
-            className="p-1 hover:text-white rounded hover:bg-zinc-800"
+            className="p-1 hover:text-white rounded hover:bg-[#2A2D32]"
           >
-            <X size={13} />
+            <X size={12} />
           </button>
         </div>
       </div>
@@ -92,4 +94,3 @@ export default function BottomPanel() {
     </div>
   );
 }
-
