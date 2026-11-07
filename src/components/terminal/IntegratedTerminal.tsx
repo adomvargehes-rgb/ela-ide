@@ -238,3 +238,4 @@ Type 'help' to see available shell commands or 'ai <prompt>' to prompt the codin
     </div>
   );
 }
+

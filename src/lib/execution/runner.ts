@@ -120,3 +120,4 @@ function formatLogArg(arg: any): string {
   }
   return String(arg);
 }
+

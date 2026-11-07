@@ -729,3 +729,4 @@ function getLanguageFromExt(filename: string): string {
       return "plaintext";
   }
 }
+

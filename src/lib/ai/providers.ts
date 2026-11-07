@@ -96,3 +96,4 @@ export const DEFAULT_AI_PROVIDERS: Record<AIProviderId, AIProviderConfig> = {
 export const ESTIMATED_PRICING_TABLE = {
   notice: "Pricing estimates are based on official API standard pay-as-you-go rates. API usage incurs real charges billed by the respective AI providers. Ensure valid billing is configured with each service.",
 };
+

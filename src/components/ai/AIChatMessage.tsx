@@ -153,3 +153,4 @@ export default function AIChatMessage({ message }: { message: ChatMessage }) {
     </div>
   );
 }
+

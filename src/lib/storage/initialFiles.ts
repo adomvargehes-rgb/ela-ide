@@ -292,3 +292,4 @@ Welcome to **Ela IDE** — the premium AI-powered development environment inspir
 `,
   },
 ];
+

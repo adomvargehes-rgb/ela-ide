@@ -44,3 +44,4 @@ export function buildProjectContextPrompt(files: { path: string; content?: strin
   context += "--- END WORKSPACE CONTEXT ---\n";
   return context;
 }
+

@@ -142,3 +142,4 @@ export default function EditorArea() {
     </div>
   );
 }
+
