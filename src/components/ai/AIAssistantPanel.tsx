@@ -293,34 +293,8 @@ export default function AIAssistantPanel() {
 
   return (
     <div className="w-full h-full bg-[#141416] border-l border-[#282828] flex flex-col select-none overflow-hidden z-20 font-sans">
-      {/* 1. Header with exact Qoder-style Pill [ ✨ Ela AI ] + Purple [ AGENT ] Badge */}
-      <div className="h-[36px] px-3 bg-[#181818] border-b border-[#282828] flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          {/* [ ✨ Ela AI ] Pill matching Image 1 */}
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1F1F23] border border-[#38383F] text-[11.5px] font-medium text-[#E4E4E7] shadow-sm select-none">
-            <Sparkles size={12} className="text-[#60A5FA]" />
-            <span>Ela AI</span>
-          </div>
-
-          {/* [ AGENT ] Purple Badge matching Image 1 */}
-          <button
-            onClick={() => {
-              const nextMode = mode === "agent" ? "chat" : "agent";
-              setMode(nextMode);
-              setActiveTab(nextMode);
-            }}
-            title="Click to toggle between Agent and Chat mode"
-            className={`px-2 py-0.5 rounded-[5px] text-[10px] font-bold tracking-wider uppercase transition-all select-none border shadow-sm ${
-              mode === "agent"
-                ? "bg-[#2A1647] border-[#7C3AED] text-[#C4B5FD] hover:bg-[#3B1F63]"
-                : "bg-emerald-950/70 border-emerald-600/80 text-emerald-300 hover:bg-emerald-900"
-            }`}
-          >
-            {mode === "agent" ? "AGENT" : "CHAT"}
-          </button>
-        </div>
-
-        {/* Panel Actions */}
+      {/* 1. Header with subtle session controls */}
+      <div className="h-[28px] px-3 bg-[#181818] border-b border-[#282828] flex items-center justify-end shrink-0">
         <div className="flex items-center gap-1 text-[#858585]">
           <button
             onClick={() => clearChatMessages()}

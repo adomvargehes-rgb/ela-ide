@@ -146,13 +146,6 @@ export default function EditorArea() {
                 <Plus size={12} strokeWidth={2} />
                 <span>New File</span>
               </button>
-              <button
-                onClick={() => setIsAIPanelOpen(true)}
-                className="px-2.5 py-1 rounded bg-[#2A2D32] hover:bg-[#33373E] text-[#CCCCCC] text-[11px] font-medium flex items-center gap-1.5 transition-colors"
-              >
-                <Sparkles size={11} className="text-[#3B82F6]" />
-                <span>Ask AI Agent</span>
-              </button>
             </div>
           </div>
         )}

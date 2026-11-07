@@ -8,7 +8,6 @@ import {
   Blocks,
   Settings2,
   User,
-  Bot,
 } from "lucide-react";
 import { useIDE } from "@/context/IDEContext";
 import { ActiveSidebarTab } from "@/types/ide";
@@ -71,24 +70,6 @@ export default function ActivityBar() {
             </button>
           );
         })}
-
-        <div className="w-5 h-[1px] bg-[#282828] my-1" />
-
-        {/* AI Assistant Quick Toggle */}
-        <button
-          onClick={toggleAIPanel}
-          title="Toggle AI Coding Assistant"
-          className={`relative w-full h-10 flex items-center justify-center transition-colors ${
-            isAIPanelOpen
-              ? "text-[#3B82F6]"
-              : "text-[#858585] hover:text-[#3B82F6]"
-          }`}
-        >
-          {isAIPanelOpen && (
-            <div className="absolute left-0 top-1 bottom-1 w-[2px] bg-[#3B82F6] rounded-r" />
-          )}
-          <Bot size={18} strokeWidth={1.5} />
-        </button>
       </div>
 
       {/* Bottom utility items */}
