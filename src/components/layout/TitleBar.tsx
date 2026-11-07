@@ -54,6 +54,7 @@ export default function TitleBar() {
     isSavingProject,
     loadCloudProject,
     createCloudProject,
+    openFolderFromDisk,
   } = useIDE();
 
   const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
@@ -146,6 +147,16 @@ export default function TitleBar() {
                   </div>
                   <div
                     onClick={() => {
+                      openFolderFromDisk();
+                      setActiveMenu(null);
+                    }}
+                    className="px-3 py-1.5 hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between"
+                  >
+                    <span>Open Folder...</span>
+                    <span className="text-[10px] text-[#858585]">Ctrl+O</span>
+                  </div>
+                  <div
+                    onClick={() => {
                       saveCurrentProject();
                       setActiveMenu(null);
                     }}
@@ -216,6 +227,16 @@ export default function TitleBar() {
 
               <div className="border-t border-[#303030] my-1" />
 
+              <div
+                onClick={() => {
+                  openFolderFromDisk();
+                  setIsProjectsDropdownOpen(false);
+                }}
+                className="px-2.5 py-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] cursor-pointer flex items-center gap-2"
+              >
+                <FolderOpen size={11} className="text-amber-400" />
+                <span>Open Local Folder...</span>
+              </div>
               <div
                 onClick={() => {
                   createCloudProject("React Web App", "react");

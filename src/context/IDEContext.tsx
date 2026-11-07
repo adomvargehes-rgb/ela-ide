@@ -37,6 +37,9 @@ interface IDEContextType {
   deleteFile: (path: string) => void;
   renameFile: (path: string, newName: string) => void;
   getActiveFileContent: () => string;
+  openFolderFromDisk: () => Promise<void>;
+  loadFolderFiles: (items: FileItem[], folderName: string) => void;
+  closeFolder: () => void;
 
   // UI Panels
   activeSidebarTab: ActiveSidebarTab;
@@ -136,11 +139,9 @@ const DEFAULT_SETTINGS: IDESettings = {
 const IDEContext = createContext<IDEContextType | undefined>(undefined);
 
 export function IDEProvider({ children }: { children: React.ReactNode }) {
-  const [files, setFiles] = useState<FileItem[]>(INITIAL_WORKSPACE_FILES);
-  const [openTabs, setOpenTabs] = useState<EditorTab[]>([
-    { id: "tab-1", filePath: "/src/App.tsx", name: "App.tsx", language: "typescript" },
-  ]);
-  const [activeTabId, setActiveTabId] = useState<string | null>("tab-1");
+  const [files, setFiles] = useState<FileItem[]>([]);
+  const [openTabs, setOpenTabs] = useState<EditorTab[]>([]);
+  const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [activeFile, setActiveFile] = useState<FileItem | null>(null);
 
   // Layout panels
@@ -158,30 +159,14 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
   // Diff Review
   const [diffReview, setDiffReview] = useState<DiffReview | null>(null);
 
-  // Problems & Logs
-  const [problems, setProblems] = useState<ProblemMarker[]>([
-    {
-      id: "prob-1",
-      filePath: "/src/utils.ts",
-      line: 7,
-      column: 14,
-      message: "Type assertion could be narrowed for non-empty arrays",
-      severity: "info",
-      source: "TypeScript",
-    },
-  ]);
+  // Problems & Logs (Real data only, no demo items)
+  const [problems, setProblems] = useState<ProblemMarker[]>([]);
   const [outputLogs, setOutputLogs] = useState<OutputLog[]>([
     {
       id: "log-1",
       timestamp: new Date().toLocaleTimeString(),
       type: "info",
-      message: "Ela IDE v1.0.0 initialized with Multi-Model AI Routing.",
-    },
-    {
-      id: "log-2",
-      timestamp: new Date().toLocaleTimeString(),
-      type: "success",
-      message: "Monaco Editor and Sandboxed Execution engine ready.",
+      message: "Ela IDE initialized. Open a folder or create a project to start coding.",
     },
   ]);
 
@@ -198,10 +183,10 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
   }, []);
   const [isAILoading, setIsAILoading] = useState<boolean>(false);
   const [tokenStats, setTokenStats] = useState<TokenUsageStats>({
-    totalPromptTokens: 140,
-    totalCompletionTokens: 220,
-    estimatedCostUSD: 0.0001,
-    requestCount: 1,
+    totalPromptTokens: 0,
+    totalCompletionTokens: 0,
+    estimatedCostUSD: 0,
+    requestCount: 0,
   });
 
   // User & Auth state
@@ -210,11 +195,9 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
   const [isLegalModalOpen, setIsLegalModalOpen] = useState<boolean>(false);
 
   // Cloud Projects state
-  const [currentProjectId, setCurrentProjectId] = useState<string>("proj-default");
-  const [currentProjectName, setCurrentProjectName] = useState<string>("My Next.js Application");
-  const [cloudProjects, setCloudProjects] = useState<{ id: string; name: string; updated_at?: string }[]>([
-    { id: "proj-default", name: "My Next.js Application", updated_at: "Just now" },
-  ]);
+  const [currentProjectId, setCurrentProjectId] = useState<string>("");
+  const [currentProjectName, setCurrentProjectName] = useState<string>("");
+  const [cloudProjects, setCloudProjects] = useState<{ id: string; name: string; updated_at?: string }[]>([]);
   const [isSavingProject, setIsSavingProject] = useState<boolean>(false);
 
   // Save current project to cloud
@@ -274,6 +257,92 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
       console.warn("Failed to load project:", err);
     }
   }, []);
+
+  // Close currently opened folder / workspace
+  const closeFolder = useCallback(() => {
+    setFiles([]);
+    setOpenTabs([]);
+    setActiveTabId(null);
+    setActiveFile(null);
+    setCurrentProjectName("");
+    setCurrentProjectId("");
+    setOutputLogs((prev) => [
+      ...prev,
+      {
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toLocaleTimeString(),
+        type: "info",
+        message: "Closed workspace folder.",
+      },
+    ]);
+  }, []);
+
+  // Load an array of files into workspace
+  const loadFolderFiles = useCallback((items: FileItem[], folderName: string) => {
+    setFiles(items);
+    setCurrentProjectName(folderName);
+    setCurrentProjectId(`local-${Date.now()}`);
+    setOpenTabs([]);
+    setActiveTabId(null);
+    setActiveFile(null);
+    setOutputLogs((prev) => [
+      ...prev,
+      {
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toLocaleTimeString(),
+        type: "success",
+        message: `Opened folder: ${folderName} (${items.length} top-level items)`,
+      },
+    ]);
+  }, []);
+
+  // Open directory from local file system via modern File System Access API
+  const openFolderFromDisk = useCallback(async () => {
+    try {
+      if (typeof window !== "undefined" && "showDirectoryPicker" in window) {
+        const dirHandle = await (window as any).showDirectoryPicker();
+        const rootName = dirHandle.name;
+
+        async function readDir(handle: any, currentPath = ""): Promise<FileItem[]> {
+          const items: FileItem[] = [];
+          for await (const entry of handle.values()) {
+            const entryPath = `${currentPath}/${entry.name}`;
+            if (entry.kind === "file") {
+              const fileData = await entry.getFile();
+              const content = await fileData.text().catch(() => "");
+              items.push({
+                id: `file-${entryPath}`,
+                name: entry.name,
+                path: entryPath,
+                type: "file",
+                content,
+                language: getLanguageFromExt(entry.name),
+              });
+            } else if (entry.kind === "directory") {
+              if (entry.name === "node_modules" || entry.name === ".git" || entry.name === ".next" || entry.name === "out") continue;
+              const children = await readDir(entry, entryPath);
+              items.push({
+                id: `dir-${entryPath}`,
+                name: entry.name,
+                path: entryPath,
+                type: "folder",
+                children,
+                isOpen: false,
+              });
+            }
+          }
+          return items.sort((a, b) => (a.type === b.type ? a.name.localeCompare(b.name) : a.type === "folder" ? -1 : 1));
+        }
+
+        const loadedFiles = await readDir(dirHandle, "");
+        loadFolderFiles(loadedFiles, rootName);
+      }
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        console.warn("Folder open dialog cancelled or error:", err);
+      }
+    }
+  }, [loadFolderFiles]);
 
   // Create new cloud project
   const createCloudProject = useCallback(async (name: string, templateId = "react") => {
@@ -774,6 +843,9 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
         deleteFile,
         renameFile,
         getActiveFileContent,
+        openFolderFromDisk,
+        loadFolderFiles,
+        closeFolder,
 
         activeSidebarTab,
         setActiveSidebarTab,

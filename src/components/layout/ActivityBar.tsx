@@ -38,7 +38,7 @@ export default function ActivityBar() {
     { id: "explorer", label: "Explorer (Ctrl+Shift+E)", icon: <Files size={18} strokeWidth={1.5} /> },
     { id: "search", label: "Search (Ctrl+Shift+F)", icon: <Search size={18} strokeWidth={1.5} /> },
     { id: "source-control", label: "Source Control (Ctrl+Shift+G)", icon: <GitBranch size={18} strokeWidth={1.5} /> },
-    { id: "extensions", label: "Extensions (Ctrl+Shift+X)", icon: <Blocks size={18} strokeWidth={1.5} />, badge: "1" },
+    { id: "extensions", label: "Extensions (Ctrl+Shift+X)", icon: <Blocks size={18} strokeWidth={1.5} /> },
   ];
 
   return (

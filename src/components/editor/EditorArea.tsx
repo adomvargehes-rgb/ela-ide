@@ -87,16 +87,8 @@ export default function EditorArea() {
           })}
         </div>
 
-        {/* Right side of tabs strip (Chat chips and split view icons like in screenshot) */}
+        {/* Right side of tabs strip (Split view and actions) */}
         <div className="flex items-center gap-1.5 pr-2 shrink-0">
-          <div
-            onClick={() => setIsAIPanelOpen(true)}
-            title="Open AI Chat Context"
-            className="px-2 py-0.5 rounded-full bg-[#242428] hover:bg-[#2E2E34] text-[11px] text-[#A1A1AA] hover:text-white cursor-pointer flex items-center gap-1 border border-[#333338]"
-          >
-            <span>hi</span>
-          </div>
-
           <button
             title="Split Editor Right"
             className="p-1 text-[#858585] hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors"
