@@ -169,27 +169,27 @@ export default function FileExplorer() {
         <div key={item.id} className="select-none">
           <div
             onClick={() => (isFolder ? toggleFolder(item.path) : openFile(item.path))}
-            style={{ paddingLeft: `${depth * 12 + 8}px` }}
-            className={`group h-[22px] flex items-center justify-between pr-2 cursor-pointer text-[12px] transition-colors ${
+            style={{ paddingLeft: `${depth * 14 + 10}px` }}
+            className={`group h-[26px] flex items-center justify-between pr-2 cursor-pointer text-[14px] font-normal transition-colors ${
               isActive
                 ? "bg-[#04395E] text-white font-medium"
-                : "text-[#CCCCCC] hover:bg-[#2A2D32]/70 hover:text-white"
+                : "text-[#D4D4D4] hover:bg-[#2A2D32]/70 hover:text-white"
             }`}
           >
-            <div className="flex items-center gap-1.5 truncate flex-1 min-w-0">
+            <div className="flex items-center gap-2 truncate flex-1 min-w-0">
               {isFolder ? (
                 <>
                   <span className="text-[#858585] shrink-0">
-                    {isExpanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                    {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
                   </span>
                   {isExpanded ? (
-                    <FolderOpen size={13} className="text-amber-400 shrink-0" />
+                    <FolderOpen size={15} className="text-amber-400 shrink-0" />
                   ) : (
-                    <Folder size={13} className="text-amber-400 shrink-0" />
+                    <Folder size={15} className="text-amber-400 shrink-0" />
                   )}
                 </>
               ) : (
-                <span className="ml-3 shrink-0">{getFileIcon(item.name)}</span>
+                <span className="ml-3.5 shrink-0">{getFileIcon(item.name)}</span>
               )}
 
               {isEditing ? (
@@ -204,7 +204,7 @@ export default function FileExplorer() {
                   }}
                   autoFocus
                   onClick={(e) => e.stopPropagation()}
-                  className="bg-[#252526] text-white px-1 py-0 rounded border border-[#3B82F6] outline-none text-[11px] w-full"
+                  className="bg-[#252526] text-white px-1.5 py-0.5 rounded border border-[#3B82F6] outline-none text-[14px] font-normal w-full"
                 />
               ) : (
                 <span className="truncate">{item.name}</span>
@@ -212,31 +212,31 @@ export default function FileExplorer() {
             </div>
 
             {/* Hover Actions: Add file/folder inside, Rename, Delete */}
-            <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 text-[#858585] shrink-0">
+            <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 text-[#858585] shrink-0">
               {isFolder && (
                 <>
                   <button
                     onClick={(e) => handleStartCreate(item.path, "file", e)}
                     title="New File Inside"
-                    className="p-0.5 hover:text-white hover:bg-[#333333] rounded"
+                    className="p-1 hover:text-white hover:bg-[#333333] rounded"
                   >
-                    <Plus size={11} />
+                    <Plus size={12} />
                   </button>
                   <button
                     onClick={(e) => handleStartCreate(item.path, "folder", e)}
                     title="New Folder Inside"
-                    className="p-0.5 hover:text-white hover:bg-[#333333] rounded"
+                    className="p-1 hover:text-white hover:bg-[#333333] rounded"
                   >
-                    <FolderPlus size={11} />
+                    <FolderPlus size={12} />
                   </button>
                 </>
               )}
               <button
                 onClick={(e) => handleStartRename(item, e)}
                 title="Rename"
-                className="p-0.5 hover:text-white hover:bg-[#333333] rounded"
+                className="p-1 hover:text-white hover:bg-[#333333] rounded"
               >
-                <Edit2 size={10} />
+                <Edit2 size={11} />
               </button>
               <button
                 onClick={(e) => {
@@ -244,16 +244,16 @@ export default function FileExplorer() {
                   deleteFile(item.path);
                 }}
                 title="Delete"
-                className="p-0.5 hover:text-rose-400 hover:bg-[#333333] rounded"
+                className="p-1 hover:text-rose-400 hover:bg-[#333333] rounded"
               >
-                <Trash2 size={10} />
+                <Trash2 size={11} />
               </button>
             </div>
           </div>
 
           {/* New Item inline creation input inside folder */}
           {creatingInPath?.path === item.path && (
-            <div style={{ paddingLeft: `${(depth + 1) * 12 + 8}px` }} className="pr-2 py-0.5">
+            <div style={{ paddingLeft: `${(depth + 1) * 14 + 10}px` }} className="pr-2 py-0.5">
               <input
                 type="text"
                 value={newItemName}
@@ -265,7 +265,7 @@ export default function FileExplorer() {
                 }}
                 autoFocus
                 placeholder={`New ${creatingInPath.type}...`}
-                className="bg-[#252526] text-white px-1.5 py-0.5 rounded border border-[#3B82F6] outline-none text-[11px] w-full"
+                className="bg-[#252526] text-white px-2 py-0.5 rounded border border-[#3B82F6] outline-none text-[14px] font-normal w-full"
               />
             </div>
           )}
@@ -280,7 +280,7 @@ export default function FileExplorer() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#181818] select-none text-[12px] font-sans">
+    <div className="flex flex-col h-full bg-[#181818] select-none text-[14px] font-sans">
       {/* Hidden folder input fallback */}
       <input
         ref={fileInputRef}
@@ -293,8 +293,8 @@ export default function FileExplorer() {
         className="hidden"
       />
 
-      {/* Explorer Header */}
-      <div className="h-[30px] px-3 flex items-center justify-between text-[11px] font-bold text-[#858585] uppercase tracking-wider border-b border-[#282828]">
+      {/* Explorer Header (Sidebar headings: 13px, font-weight 600) */}
+      <div className="h-[34px] px-3 flex items-center justify-between text-[13px] font-semibold text-[#858585] uppercase tracking-wider border-b border-[#282828]">
         <span>Explorer</span>
         {files.length > 0 && (
           <div className="flex items-center gap-1 text-[#858585]">
@@ -303,21 +303,21 @@ export default function FileExplorer() {
               title="New File"
               className="p-1 hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors"
             >
-              <Plus size={13} />
+              <Plus size={14} />
             </button>
             <button
               onClick={() => handleStartCreate("/", "folder")}
               title="New Folder"
               className="p-1 hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors"
             >
-              <FolderPlus size={13} />
+              <FolderPlus size={14} />
             </button>
             <button
               onClick={closeFolder}
               title="Close Folder"
               className="p-1 hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors"
             >
-              <X size={13} />
+              <X size={14} />
             </button>
           </div>
         )}
@@ -325,17 +325,18 @@ export default function FileExplorer() {
 
       {/* Workspace Area: Shows clean NO FOLDER OPENED if files are empty */}
       {files.length === 0 ? (
-        <div className="flex-1 p-3.5 flex flex-col justify-start space-y-3">
-          <div className="space-y-1">
-            <span className="text-[11px] font-semibold text-[#858585] uppercase tracking-wider block">
+        <div className="flex-1 p-4 flex flex-col justify-start space-y-3.5">
+          <div className="space-y-1.5">
+            <span className="text-[13px] font-semibold text-[#858585] uppercase tracking-wider block">
               No Folder Opened
             </span>
-            <p className="text-[11px] text-[#71717A] leading-relaxed">
+            <p className="text-[13px] text-[#858585] leading-relaxed">
               You have not yet opened a folder. Open any project from your computer or create a new workspace.
             </p>
           </div>
 
           <div className="space-y-2 pt-1">
+            {/* Buttons: 13px, font-weight 500 */}
             <button
               onClick={() => {
                 if (typeof window !== "undefined" && "showDirectoryPicker" in window) {
@@ -344,17 +345,17 @@ export default function FileExplorer() {
                   fileInputRef.current?.click();
                 }
               }}
-              className="w-full py-1.5 px-3 bg-[#0E639C] hover:bg-[#1177BB] text-white rounded text-[11.5px] font-medium flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+              className="w-full py-2 px-3.5 bg-[#0E639C] hover:bg-[#1177BB] text-white rounded text-[13px] font-medium flex items-center justify-center gap-2 transition-colors shadow-sm"
             >
-              <FolderInput size={13} />
+              <FolderInput size={14} />
               <span>Open Folder</span>
             </button>
 
             <button
               onClick={() => createCloudProject("New React App", "react")}
-              className="w-full py-1.5 px-3 bg-[#242428] hover:bg-[#2C2C30] text-[#CCCCCC] hover:text-white rounded text-[11.5px] font-medium flex items-center justify-center gap-1.5 transition-colors border border-[#333338]"
+              className="w-full py-2 px-3.5 bg-[#242428] hover:bg-[#2C2C30] text-[#CCCCCC] hover:text-white rounded text-[13px] font-medium flex items-center justify-center gap-2 transition-colors border border-[#333338]"
             >
-              <Sparkles size={12} className="text-[#3B82F6]" />
+              <Sparkles size={13} className="text-[#3B82F6]" />
               <span>Create New Project</span>
             </button>
           </div>
@@ -362,10 +363,10 @@ export default function FileExplorer() {
       ) : (
         /* Render Folder Tree only when a folder is opened */
         <div className="flex-1 overflow-y-auto">
-          {/* Root Project Header */}
-          <div className="px-2 py-1 flex items-center justify-between font-bold text-[11px] text-[#CCCCCC] uppercase tracking-wide cursor-pointer hover:bg-[#2A2D32]/40">
-            <div className="flex items-center gap-1 truncate">
-              <ChevronDown size={11} className="text-[#858585]" />
+          {/* Root Project Header (Workspace title: 15px, font-weight 600) */}
+          <div className="h-[30px] px-2.5 flex items-center justify-between font-semibold text-[15px] text-[#E4E4E7] tracking-wide cursor-pointer hover:bg-[#2A2D32]/40">
+            <div className="flex items-center gap-1.5 truncate">
+              <ChevronDown size={13} className="text-[#858585]" />
               <span className="truncate">{currentProjectName || "WORKSPACE"}</span>
             </div>
           </div>
@@ -384,12 +385,12 @@ export default function FileExplorer() {
                 }}
                 autoFocus
                 placeholder={`New ${creatingInPath.type}...`}
-                className="bg-[#252526] text-white px-1.5 py-0.5 rounded border border-[#3B82F6] outline-none text-[11px] w-full"
+                className="bg-[#252526] text-white px-2 py-0.5 rounded border border-[#3B82F6] outline-none text-[14px] font-normal w-full"
               />
             </div>
           )}
 
-          {/* File and folder tree */}
+          {/* File and folder tree (Sidebar items: 14px, font-weight 400) */}
           <div className="py-0.5">{renderTree(files)}</div>
         </div>
       )}

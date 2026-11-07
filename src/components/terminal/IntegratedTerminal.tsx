@@ -199,18 +199,18 @@ Type 'help' to see available shell commands or 'ai <prompt>' to prompt the codin
   return (
     <div
       onClick={() => inputRef.current?.focus()}
-      className="h-full flex flex-col bg-[#121214] text-zinc-300 font-mono text-xs select-text cursor-text"
+      className="h-full flex flex-col bg-[#121214] text-zinc-300 font-mono text-[14px] leading-relaxed select-text cursor-text"
     >
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+      <div className="flex-1 overflow-y-auto p-3.5 space-y-2.5">
         {history.map((entry, idx) => (
           <div key={idx} className="space-y-1">
-            <div className="flex items-center gap-1.5 text-zinc-400">
-              <span className="text-emerald-400 font-semibold">ela@browser:~/workspace$</span>
+            <div className="flex items-center gap-2 text-zinc-400">
+              <span className="text-emerald-400 font-medium">ela@browser:~/workspace$</span>
               <span className="text-zinc-100">{entry.command}</span>
             </div>
             {entry.output && (
               <div
-                className={`whitespace-pre-wrap pl-2 leading-relaxed ${
+                className={`whitespace-pre-wrap pl-2.5 leading-relaxed ${
                   entry.isError ? "text-rose-400" : "text-zinc-300"
                 }`}
               >
@@ -221,8 +221,8 @@ Type 'help' to see available shell commands or 'ai <prompt>' to prompt the codin
         ))}
 
         {/* Live input line */}
-        <div className="flex items-center gap-1.5 pt-1">
-          <span className="text-emerald-400 font-semibold shrink-0">ela@browser:~/workspace$</span>
+        <div className="flex items-center gap-2 pt-1">
+          <span className="text-emerald-400 font-medium shrink-0">ela@browser:~/workspace$</span>
           <input
             ref={inputRef}
             type="text"
@@ -230,7 +230,7 @@ Type 'help' to see available shell commands or 'ai <prompt>' to prompt the codin
             onChange={(e) => setCurrentInput(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
-            className="flex-1 bg-transparent border-none outline-none text-zinc-100 font-mono text-xs p-0 m-0"
+            className="flex-1 bg-transparent border-none outline-none text-zinc-100 font-mono text-[14px] p-0 m-0"
           />
         </div>
         <div ref={bottomRef} />

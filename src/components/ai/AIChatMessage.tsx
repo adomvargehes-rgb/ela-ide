@@ -61,28 +61,28 @@ export default function AIChatMessage({ message }: { message: ChatMessage }) {
         return (
           <div
             key={index}
-            className="my-2.5 rounded-xl border border-zinc-800 bg-[#0d0d10] overflow-hidden font-mono text-xs shadow-inner"
+            className="my-3 rounded-xl border border-zinc-800 bg-[#0d0d10] overflow-hidden font-mono text-[14px] shadow-inner"
           >
             {/* Code block header */}
-            <div className="h-7 px-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between text-[11px] text-zinc-400">
-              <span className="uppercase font-semibold tracking-wider text-blue-400 text-[10px]">
+            <div className="h-8 px-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between text-[12px] text-zinc-400">
+              <span className="uppercase font-semibold tracking-wider text-blue-400 text-[11px]">
                 {language}
               </span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={handleReviewDiff}
                   title="Inspect Side-by-Side Diff"
-                  className="px-2 py-0.5 rounded hover:bg-zinc-800 text-zinc-300 hover:text-white flex items-center gap-1 text-[10px] transition-colors"
+                  className="px-2 py-0.5 rounded hover:bg-zinc-800 text-zinc-300 hover:text-white flex items-center gap-1 text-[12px] font-medium transition-colors"
                 >
-                  <FileDiff size={11} className="text-amber-400" />
+                  <FileDiff size={12} className="text-amber-400" />
                   <span>Review Diff</span>
                 </button>
                 <button
                   onClick={handleApplyToActive}
                   title="Apply code directly to active file"
-                  className="px-2 py-0.5 rounded hover:bg-zinc-800 text-zinc-300 hover:text-white flex items-center gap-1 text-[10px] transition-colors"
+                  className="px-2 py-0.5 rounded hover:bg-zinc-800 text-zinc-300 hover:text-white flex items-center gap-1 text-[12px] font-medium transition-colors"
                 >
-                  <Code size={11} className="text-blue-400" />
+                  <Code size={12} className="text-blue-400" />
                   <span>Apply</span>
                 </button>
                 <button
@@ -91,16 +91,16 @@ export default function AIChatMessage({ message }: { message: ChatMessage }) {
                   className="p-1 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white transition-colors"
                 >
                   {copiedCodeIdx === index ? (
-                    <Check size={11} className="text-emerald-400" />
+                    <Check size={12} className="text-emerald-400" />
                   ) : (
-                    <Copy size={11} />
+                    <Copy size={12} />
                   )}
                 </button>
               </div>
             </div>
 
             {/* Code text */}
-            <pre className="p-3 overflow-x-auto text-zinc-200 leading-relaxed scrollbar-thin">
+            <pre className="p-3.5 overflow-x-auto text-zinc-200 leading-relaxed scrollbar-thin text-[14px] font-mono">
               <code>{code}</code>
             </pre>
           </div>
@@ -109,7 +109,7 @@ export default function AIChatMessage({ message }: { message: ChatMessage }) {
 
       // Plain paragraphs and bold text
       return (
-        <div key={index} className="whitespace-pre-wrap leading-relaxed space-y-1">
+        <div key={index} className="whitespace-pre-wrap leading-relaxed space-y-1.5 text-[14px]">
           {part}
         </div>
       );
@@ -119,7 +119,7 @@ export default function AIChatMessage({ message }: { message: ChatMessage }) {
   if (!isAssistant) {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[85%] bg-[#222226] text-zinc-200 text-xs px-3.5 py-1.5 rounded-lg border border-zinc-700/30 shadow-sm leading-relaxed">
+        <div className="max-w-[85%] bg-[#222226] text-zinc-200 text-[14px] px-4 py-2 rounded-xl border border-zinc-700/30 shadow-sm leading-relaxed">
           {message.content}
         </div>
       </div>
@@ -135,14 +135,14 @@ export default function AIChatMessage({ message }: { message: ChatMessage }) {
 
   if (isWarningOrError) {
     return (
-      <div className="text-xs text-zinc-300 space-y-2 leading-relaxed pt-1">
+      <div className="text-[14px] text-zinc-300 space-y-2 leading-relaxed pt-1">
         <div className="flex items-start gap-2">
-          <AlertTriangle size={13} className="text-amber-400 shrink-0 mt-0.5" />
+          <AlertTriangle size={15} className="text-amber-400 shrink-0 mt-0.5" />
           <div className="space-y-2">
             <div>{renderFormattedContent(message.content)}</div>
             <button
               onClick={() => updateSettings({ activeProviderId: "groq" })}
-              className="px-2.5 py-1 rounded-md bg-[#222226] hover:bg-[#2a2a2e] text-zinc-300 text-xs border border-zinc-700/50 transition-colors block"
+              className="px-3 py-1.5 rounded-md bg-[#222226] hover:bg-[#2a2a2e] text-zinc-300 text-[13px] font-medium border border-zinc-700/50 transition-colors block"
             >
               Get More Credits / Switch to Free Models
             </button>
@@ -154,7 +154,7 @@ export default function AIChatMessage({ message }: { message: ChatMessage }) {
 
   // Clean, borderless stream matching Qoder layout
   return (
-    <div className="text-xs text-zinc-200 space-y-2 leading-relaxed">
+    <div className="text-[14px] text-zinc-200 space-y-2 leading-relaxed">
       {renderFormattedContent(message.content)}
     </div>
   );

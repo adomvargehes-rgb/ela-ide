@@ -29,12 +29,12 @@ export default function SearchPanel() {
   );
 
   return (
-    <div className="h-full flex flex-col bg-ide-sidebar text-zinc-300">
-      <div className="h-8 px-3 border-b border-ide-border flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-400">
+    <div className="h-full flex flex-col bg-ide-sidebar text-zinc-300 font-sans">
+      <div className="h-[34px] px-3 border-b border-[#282828] flex items-center justify-between text-[13px] font-semibold uppercase tracking-wider text-[#858585]">
         <span>Search</span>
       </div>
 
-      <div className="p-3 space-y-2 border-b border-ide-border">
+      <div className="p-3 space-y-2.5 border-b border-[#282828]">
         {/* Search input */}
         <div className="relative flex items-center">
           <input
@@ -42,7 +42,7 @@ export default function SearchPanel() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search workspace (regex or text)..."
-            className="w-full h-7 bg-zinc-900 border border-zinc-700/80 rounded px-2 pr-16 text-xs text-zinc-200 outline-none focus:border-blue-500"
+            className="w-full h-8 bg-zinc-900 border border-zinc-700/80 rounded px-2.5 pr-16 text-[14px] font-normal text-zinc-200 outline-none focus:border-blue-500"
           />
           <div className="absolute right-1 flex items-center gap-0.5 text-zinc-500">
             <button title="Match Case" className="p-1 hover:text-zinc-200 rounded">

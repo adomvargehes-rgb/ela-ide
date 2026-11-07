@@ -65,13 +65,13 @@ export default function SettingsPanel() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-ide-sidebar text-zinc-300">
-      <div className="h-8 px-3 border-b border-ide-border flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-400">
+    <div className="h-full flex flex-col bg-ide-sidebar text-zinc-300 font-sans">
+      <div className="h-[34px] px-3 border-b border-[#282828] flex items-center justify-between text-[13px] font-semibold uppercase tracking-wider text-[#858585]">
         <span>Settings & AI Providers</span>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-ide-border px-3 text-xs">
+      <div className="flex border-b border-[#282828] px-3 text-[13px]">
         <button
           onClick={() => setActiveTab("ai")}
           className={`py-2 px-3 border-b-2 font-medium transition-colors ${
@@ -104,7 +104,7 @@ export default function SettingsPanel() {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 text-xs">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 text-[14px]">
         {/* AI Providers Tab */}
         {activeTab === "ai" && (
           <div className="space-y-6">

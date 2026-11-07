@@ -46,7 +46,7 @@ export default function BottomPanel({ height = 200 }: { height?: number }) {
       className="bg-[#181818] border-t border-[#282828] flex flex-col shrink-0 select-none z-10 font-sans"
     >
       {/* Panel header tabs */}
-      <div className="h-[28px] bg-[#181818] border-b border-[#282828] flex items-center justify-between px-2 text-[11px]">
+      <div className="h-[32px] bg-[#181818] border-b border-[#282828] flex items-center justify-between px-2.5 text-[13px]">
         <div className="flex items-center gap-1">
           {tabs.map((tab) => {
             const isActive = bottomPanelTab === tab.id;
@@ -54,7 +54,7 @@ export default function BottomPanel({ height = 200 }: { height?: number }) {
               <button
                 key={tab.id}
                 onClick={() => setBottomPanelTab(tab.id)}
-                className={`h-[28px] px-2.5 flex items-center gap-1.5 font-medium transition-colors border-b-2 ${
+                className={`h-[32px] px-3 flex items-center gap-2 font-medium transition-colors border-b-2 text-[13px] ${
                   isActive
                     ? "border-[#3B82F6] text-white bg-[#1E1E1E]"
                     : "border-transparent text-[#858585] hover:text-[#CCCCCC]"
@@ -63,7 +63,7 @@ export default function BottomPanel({ height = 200 }: { height?: number }) {
                 {tab.icon}
                 <span>{tab.label}</span>
                 {tab.badge !== undefined && (
-                  <span className="text-[9px] px-1 py-0.2 rounded-full bg-rose-500/20 text-rose-300 font-bold">
+                  <span className="text-[11px] px-1.5 py-0.2 rounded-full bg-rose-500/20 text-rose-300 font-bold">
                     {tab.badge}
                   </span>
                 )}

@@ -87,43 +87,43 @@ export default function ExtensionsPanel() {
   );
 
   return (
-    <div className="h-full flex flex-col bg-ide-sidebar text-zinc-300">
-      <div className="h-8 px-3 border-b border-ide-border flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-400">
+    <div className="h-full flex flex-col bg-ide-sidebar text-zinc-300 font-sans">
+      <div className="h-[34px] px-3 border-b border-[#282828] flex items-center justify-between text-[13px] font-semibold uppercase tracking-wider text-[#858585]">
         <span>Extensions</span>
       </div>
 
-      <div className="p-3 border-b border-ide-border">
+      <div className="p-3 border-b border-[#282828]">
         <div className="relative flex items-center">
           <input
             type="text"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Search Extensions in Marketplace..."
-            className="w-full h-7 bg-zinc-900 border border-zinc-700/80 rounded px-2 pl-7 text-xs text-zinc-200 outline-none focus:border-blue-500"
+            className="w-full h-8 bg-zinc-900 border border-zinc-700/80 rounded px-2.5 pl-8 text-[14px] font-normal text-zinc-200 outline-none focus:border-blue-500"
           />
-          <Search size={13} className="absolute left-2 text-zinc-500" />
+          <Search size={14} className="absolute left-2.5 text-zinc-500" />
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-2 space-y-2">
+      <div className="flex-1 overflow-y-auto p-2.5 space-y-2.5">
         {filtered.map((ext) => (
           <div
             key={ext.id}
-            className="p-2 rounded bg-zinc-900/50 border border-zinc-800/80 hover:border-zinc-700 transition-colors"
+            className="p-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800/80 hover:border-zinc-700 transition-colors"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-xs text-zinc-100 truncate">{ext.name}</span>
+                  <span className="font-medium text-[14px] text-zinc-100 truncate">{ext.name}</span>
                 </div>
-                <p className="text-[11px] text-zinc-400 line-clamp-2 mt-0.5 leading-snug">
+                <p className="text-[13px] text-zinc-400 line-clamp-2 mt-1 leading-relaxed">
                   {ext.description}
                 </p>
-                <div className="flex items-center gap-2 mt-1.5 text-[10px] text-zinc-500">
+                <div className="flex items-center gap-2 mt-2 text-[12px] text-zinc-500">
                   <span>{ext.author}</span>
                   <span>•</span>
                   <div className="flex items-center gap-0.5 text-amber-400">
-                    <Star size={10} fill="currentColor" />
+                    <Star size={11} fill="currentColor" />
                     <span>{ext.rating}</span>
                   </div>
                   <span>•</span>
@@ -133,7 +133,7 @@ export default function ExtensionsPanel() {
 
               <button
                 onClick={() => toggleInstall(ext.id)}
-                className={`px-2 py-1 rounded text-[11px] font-medium shrink-0 flex items-center gap-1 transition-colors ${
+                className={`px-3 py-1 rounded text-[13px] font-medium shrink-0 flex items-center gap-1.5 transition-colors ${
                   ext.installed
                     ? "bg-zinc-800 text-zinc-400 hover:text-rose-400 hover:bg-zinc-700/60"
                     : "bg-blue-600 hover:bg-blue-500 text-white"
@@ -141,12 +141,12 @@ export default function ExtensionsPanel() {
               >
                 {ext.installed ? (
                   <>
-                    <Check size={11} strokeWidth={2.2} />
+                    <Check size={12} strokeWidth={2.2} />
                     <span>Installed</span>
                   </>
                 ) : (
                   <>
-                    <Download size={11} strokeWidth={2.2} />
+                    <Download size={12} strokeWidth={2.2} />
                     <span>Install</span>
                   </>
                 )}

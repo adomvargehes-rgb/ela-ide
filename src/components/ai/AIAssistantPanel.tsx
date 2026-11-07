@@ -317,13 +317,13 @@ export default function AIAssistantPanel() {
       <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5">
         {chatMessages.length === 0 ? (
           <div className="h-full flex flex-col justify-end pb-4 space-y-3">
-            <div className="space-y-1">
-              <span className="text-[11px] font-semibold text-[#858585] uppercase tracking-wider block">
+            <div className="space-y-1.5">
+              <span className="text-[12px] font-semibold text-[#858585] uppercase tracking-wider block">
                 Quick Actions
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() =>
                   handleSubmit(
@@ -331,9 +331,9 @@ export default function AIAssistantPanel() {
                     "agent"
                   )
                 }
-                className="p-2 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[11px] text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-1.5 group"
+                className="p-2.5 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[13px] font-medium text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-2 group"
               >
-                <Code2 size={13} className="text-[#3B82F6] shrink-0" />
+                <Code2 size={14} className="text-[#3B82F6] shrink-0" />
                 <span className="truncate">Generate Code</span>
               </button>
 
@@ -344,9 +344,9 @@ export default function AIAssistantPanel() {
                     "explain"
                   )
                 }
-                className="p-2 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[11px] text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-1.5 group"
+                className="p-2.5 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[13px] font-medium text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-2 group"
               >
-                <BookOpen size={13} className="text-amber-400 shrink-0" />
+                <BookOpen size={14} className="text-amber-400 shrink-0" />
                 <span className="truncate">Explain File</span>
               </button>
 
@@ -357,9 +357,9 @@ export default function AIAssistantPanel() {
                     "bugfix"
                   )
                 }
-                className="p-2 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[11px] text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-1.5 group"
+                className="p-2.5 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[13px] font-medium text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-2 group"
               >
-                <Bug size={13} className="text-rose-400 shrink-0" />
+                <Bug size={14} className="text-rose-400 shrink-0" />
                 <span className="truncate">Find & Fix Issues</span>
               </button>
 
@@ -370,9 +370,9 @@ export default function AIAssistantPanel() {
                     "agent"
                   )
                 }
-                className="p-2 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[11px] text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-1.5 group"
+                className="p-2.5 rounded-lg bg-[#1E1E22] hover:bg-[#26262B] border border-[#2D2D32] text-left text-[13px] font-medium text-[#CCCCCC] hover:text-white transition-colors flex items-center gap-2 group"
               >
-                <PlusCircle size={13} className="text-emerald-400 shrink-0" />
+                <PlusCircle size={14} className="text-emerald-400 shrink-0" />
                 <span className="truncate">Add New Feature</span>
               </button>
             </div>
@@ -461,47 +461,47 @@ export default function AIAssistantPanel() {
             </div>
           )}
 
-          {/* Textarea */}
+          {/* Textarea: 14px leading-relaxed */}
           <textarea
             ref={textareaRef}
             value={inputPrompt}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Ask for follow up changes"
+            placeholder="Ask for follow up changes, @ for context, / for commands"
             rows={2}
-            className="w-full bg-transparent text-[12px] text-[#E4E4E7] placeholder-[#66666A] outline-none resize-none font-sans leading-relaxed scrollbar-none"
+            className="w-full bg-transparent text-[14px] text-[#E4E4E7] placeholder-[#71717A] outline-none resize-none font-sans leading-relaxed scrollbar-none"
           />
 
           {/* Controls Bar inside Composer */}
-          <div className="flex items-center justify-between pt-1.5">
-            {/* Left: Mode pill and Model pill */}
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-between pt-2">
+            {/* Left: Mode pill and Model pill (Buttons: 13px, font-weight 500) */}
+            <div className="flex items-center gap-2">
               {/* [ Ꝏ Agent ⌄ ] */}
               <div className="relative" ref={modeDropdownRef}>
                 <button
                   type="button"
                   onClick={() => setIsModeDropdownOpen((v) => !v)}
-                  className="h-6 px-2 rounded-md bg-[#242428] hover:bg-[#2C2C30] text-[#CCCCCC] text-[11px] font-medium flex items-center gap-1 transition-colors border border-[#333338]"
+                  className="h-7 px-2.5 rounded-md bg-[#242428] hover:bg-[#2C2C30] text-[#CCCCCC] text-[13px] font-medium flex items-center gap-1.5 transition-colors border border-[#333338]"
                 >
-                  <InfinityIcon size={12} className="text-[#858585]" />
+                  <InfinityIcon size={13} className="text-[#858585]" />
                   <span className="capitalize">{mode === "agent" ? "Agent" : "Chat"}</span>
-                  <ChevronDown size={10} className="text-[#858585]" />
+                  <ChevronDown size={11} className="text-[#858585]" />
                 </button>
 
                 {isModeDropdownOpen && (
-                  <div className="absolute left-0 bottom-full mb-1 w-32 bg-[#1C1C20] border border-[#303030] rounded-xl shadow-2xl p-1 text-xs space-y-0.5 z-40">
+                  <div className="absolute left-0 bottom-full mb-1 w-36 bg-[#1C1C20] border border-[#303030] rounded-xl shadow-2xl p-1 text-[13px] font-medium space-y-0.5 z-40">
                     <button
                       type="button"
                       onClick={() => {
                         setMode("agent");
                         setIsModeDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-2 py-1 rounded-lg flex items-center justify-between ${
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
                         mode === "agent" ? "bg-[#2A2D32] text-white" : "text-[#CCCCCC] hover:bg-[#26262B]"
                       }`}
                     >
                       <span>Agent</span>
-                      {mode === "agent" && <Check size={11} />}
+                      {mode === "agent" && <Check size={13} />}
                     </button>
                     <button
                       type="button"
@@ -509,12 +509,12 @@ export default function AIAssistantPanel() {
                         setMode("chat");
                         setIsModeDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-2 py-1 rounded-lg flex items-center justify-between ${
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
                         mode === "chat" ? "bg-[#2A2D32] text-white" : "text-[#CCCCCC] hover:bg-[#26262B]"
                       }`}
                     >
                       <span>Chat</span>
-                      {mode === "chat" && <Check size={11} />}
+                      {mode === "chat" && <Check size={13} />}
                     </button>
                   </div>
                 )}
@@ -525,15 +525,15 @@ export default function AIAssistantPanel() {
                 <button
                   type="button"
                   onClick={() => setIsModelDropdownOpen((v) => !v)}
-                  className="h-6 px-1.5 rounded-md hover:bg-[#242428] text-[#858585] hover:text-[#CCCCCC] text-[11px] font-medium flex items-center gap-1 transition-colors max-w-[130px] truncate"
+                  className="h-7 px-2 rounded-md hover:bg-[#242428] text-[#858585] hover:text-[#CCCCCC] text-[13px] font-medium flex items-center gap-1 transition-colors max-w-[140px] truncate"
                 >
                   <span className="truncate">{activeProvider?.selectedModel ? activeProvider.selectedModel.split("/").pop() : "Auto"}</span>
-                  <ChevronDown size={10} className="text-[#858585] shrink-0" />
+                  <ChevronDown size={11} className="text-[#858585] shrink-0" />
                 </button>
 
                 {isModelDropdownOpen && (
-                  <div className="absolute left-0 bottom-full mb-1 w-64 bg-[#1C1C20] border border-[#303030] rounded-xl shadow-2xl p-1.5 max-h-56 overflow-y-auto space-y-0.5 text-xs z-50">
-                    <div className="px-2 py-0.5 text-[10px] uppercase font-semibold text-[#858585] tracking-wider">
+                  <div className="absolute left-0 bottom-full mb-1 w-64 bg-[#1C1C20] border border-[#303030] rounded-xl shadow-2xl p-1.5 max-h-56 overflow-y-auto space-y-0.5 text-[13px] z-50">
+                    <div className="px-2.5 py-1 text-[11px] uppercase font-semibold text-[#858585] tracking-wider">
                       Available Models
                     </div>
                     {allAvailableModels.map((item, idx) => {
@@ -550,16 +550,16 @@ export default function AIAssistantPanel() {
                           }`}
                         >
                           <div className="truncate min-w-0 pr-1">
-                            <span className="truncate font-mono text-[11px] block">{item.model}</span>
-                            <span className="text-[10px] text-[#858585] block">{item.providerName}</span>
+                            <span className="truncate font-mono text-[12px] block">{item.model}</span>
+                            <span className="text-[11px] text-[#858585] block">{item.providerName}</span>
                           </div>
                           <div className="flex items-center gap-1 shrink-0">
                             {item.isFree && (
-                              <span className="text-[9px] font-mono px-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">
+                              <span className="text-[10px] font-mono px-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">
                                 FREE
                               </span>
                             )}
-                            {isSelected && <Check size={11} />}
+                            {isSelected && <Check size={12} />}
                           </div>
                         </div>
                       );
@@ -570,14 +570,14 @@ export default function AIAssistantPanel() {
             </div>
 
             {/* Right: Sparkles, Mic, Emerald Action Square */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setIsFilePickerOpen((v) => !v)}
                 title="Attach workspace context (@)"
                 className="text-[#858585] hover:text-[#CCCCCC] transition-colors p-1"
               >
-                <Sparkles size={13} />
+                <Sparkles size={14} />
               </button>
 
               <button
@@ -588,17 +588,17 @@ export default function AIAssistantPanel() {
                   isListening ? "text-rose-400 animate-pulse" : "text-[#858585] hover:text-[#CCCCCC]"
                 }`}
               >
-                {isListening ? <MicOff size={13} /> : <Mic size={13} />}
+                {isListening ? <MicOff size={14} /> : <Mic size={14} />}
               </button>
 
-              {/* Exact Green Square Action Button from Screenshot */}
+              {/* Green Square Action Button */}
               {isAILoading ? (
                 <button
                   type="button"
                   title="Stop generation"
-                  className="w-6 h-6 rounded-md bg-[#10B981] hover:bg-emerald-400 flex items-center justify-center transition-colors shadow-sm"
+                  className="w-7 h-7 rounded-md bg-[#10B981] hover:bg-emerald-400 flex items-center justify-center transition-colors shadow-sm"
                 >
-                  <Square size={8} className="text-black" fill="currentColor" />
+                  <Square size={10} className="text-black" fill="currentColor" />
                 </button>
               ) : (
                 <button
@@ -606,9 +606,9 @@ export default function AIAssistantPanel() {
                   onClick={() => handleSubmit()}
                   disabled={!inputPrompt.trim()}
                   title="Submit (Enter)"
-                  className="w-6 h-6 rounded-md bg-[#10B981] hover:bg-emerald-400 disabled:opacity-30 disabled:hover:bg-[#10B981] flex items-center justify-center transition-colors shadow-sm"
+                  className="w-7 h-7 rounded-md bg-[#10B981] hover:bg-emerald-400 disabled:opacity-30 disabled:hover:bg-[#10B981] flex items-center justify-center transition-colors shadow-sm"
                 >
-                  <Square size={8} className="text-black" fill="currentColor" />
+                  <Square size={10} className="text-black" fill="currentColor" />
                 </button>
               )}
             </div>
@@ -616,19 +616,19 @@ export default function AIAssistantPanel() {
         </div>
       </div>
 
-      {/* 6. Status line under composer (Exact match to screenshot) */}
-      <div className="h-[22px] px-3 flex items-center justify-between text-[10.5px] text-[#666666] border-t border-[#242426] bg-[#141416] select-none">
+      {/* 6. Status line under composer (Status bar: 12px) */}
+      <div className="h-[24px] px-3 flex items-center justify-between text-[12px] text-[#858585] border-t border-[#242426] bg-[#141416] select-none">
         <div className="flex items-center gap-1 hover:text-[#CCCCCC] cursor-pointer">
           <span>⇥ NEXT</span>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => updateSettings({ activeProviderId: "groq" })}
             title="Free Tier Active"
             className="flex items-center gap-1 hover:text-[#CCCCCC] transition-colors"
           >
-            <ArrowUpCircle size={10} className="text-[#666666]" />
+            <ArrowUpCircle size={11} className="text-[#858585]" />
             <span>Pro Trial - Upgrade</span>
           </button>
 
@@ -636,12 +636,12 @@ export default function AIAssistantPanel() {
             title={`Token Usage: ${tokenStats.totalPromptTokens + tokenStats.totalCompletionTokens} tokens`}
             className="flex items-center gap-1 hover:text-[#CCCCCC] cursor-help"
           >
-            <Gauge size={10} className="text-[#666666]" />
+            <Gauge size={11} className="text-[#858585]" />
             <span>Usage - 100%</span>
           </div>
 
           <button title="Notifications" className="hover:text-[#CCCCCC] transition-colors">
-            <Bell size={10} />
+            <Bell size={11} />
           </button>
         </div>
       </div>

@@ -8,22 +8,22 @@ export default function OutputPanel() {
   const { outputLogs, clearOutputLogs } = useIDE();
 
   return (
-    <div className="h-full flex flex-col bg-ide-panel text-zinc-300 font-mono text-xs">
+    <div className="h-full flex flex-col bg-ide-panel text-zinc-300 font-mono text-[14px]">
       {/* Mini toolbar */}
-      <div className="h-6 px-3 border-b border-ide-border flex items-center justify-between bg-zinc-900/60">
-        <span className="text-[11px] text-zinc-400">Execution & Build Console</span>
+      <div className="h-7 px-3 border-b border-ide-border flex items-center justify-between bg-zinc-900/60 text-[13px]">
+        <span className="text-zinc-400 font-sans">Execution & Build Console</span>
         <button
           onClick={clearOutputLogs}
           title="Clear Output"
           className="p-1 hover:text-white text-zinc-500 rounded"
         >
-          <Trash2 size={12} />
+          <Trash2 size={13} />
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 space-y-1 select-text">
+      <div className="flex-1 overflow-y-auto p-3.5 space-y-1.5 select-text">
         {outputLogs.length === 0 ? (
-          <div className="text-zinc-600">Console is clear.</div>
+          <div className="text-zinc-600 text-[13px]">Console is clear.</div>
         ) : (
           outputLogs.map((log) => {
             let textColor = "text-zinc-300";
@@ -43,8 +43,8 @@ export default function OutputPanel() {
             }
 
             return (
-              <div key={log.id} className="flex items-start gap-2 leading-relaxed">
-                <span className="text-zinc-600 shrink-0 text-[10px] pt-0.5">{log.timestamp}</span>
+              <div key={log.id} className="flex items-start gap-2.5 leading-relaxed text-[14px]">
+                <span className="text-zinc-600 shrink-0 text-[12px] pt-0.5">{log.timestamp}</span>
                 <span className={`${textColor} whitespace-pre-wrap break-all flex-1`}>
                   {log.message}
                 </span>

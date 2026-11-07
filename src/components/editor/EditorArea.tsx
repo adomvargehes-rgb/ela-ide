@@ -56,7 +56,7 @@ export default function EditorArea() {
   return (
     <div className="flex-1 flex flex-col h-full bg-[#1E1E1E] overflow-hidden select-none font-sans">
       {/* Editor Tabs Bar */}
-      <div className="h-[32px] bg-[#181818] border-b border-[#282828] flex items-center justify-between overflow-x-auto scrollbar-none">
+      <div className="h-[34px] bg-[#181818] border-b border-[#282828] flex items-center justify-between overflow-x-auto scrollbar-none">
         <div className="flex items-center h-full overflow-x-auto scrollbar-none">
           {openTabs.map((tab) => {
             const isActive = activeTabId === tab.id;
@@ -64,7 +64,7 @@ export default function EditorArea() {
               <div
                 key={tab.id}
                 onClick={() => openFile(tab.filePath)}
-                className={`group h-full flex items-center gap-1.5 px-3 border-r border-[#282828] text-[12px] cursor-pointer transition-colors relative min-w-[120px] max-w-[210px] ${
+                className={`group h-full flex items-center gap-2 px-3.5 border-r border-[#282828] text-[13px] cursor-pointer transition-colors relative min-w-[130px] max-w-[220px] ${
                   isActive
                     ? "bg-[#1E1E1E] text-white font-medium border-t-2 border-[#10B981]"
                     : "bg-[#181818] text-[#858585] hover:bg-[#1E1E1E]/50 hover:text-[#CCCCCC]"
@@ -80,7 +80,7 @@ export default function EditorArea() {
                   title="Close Tab"
                   className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-[#333333] rounded text-[#858585] hover:text-white transition-opacity"
                 >
-                  <X size={11} />
+                  <X size={12} />
                 </button>
               </div>
             );
@@ -93,24 +93,24 @@ export default function EditorArea() {
             title="Split Editor Right"
             className="p-1 text-[#858585] hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors"
           >
-            <SplitSquareHorizontal size={13} />
+            <SplitSquareHorizontal size={14} />
           </button>
           <button
             title="More Options"
             className="p-1 text-[#858585] hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors"
           >
-            <MoreHorizontal size={13} />
+            <MoreHorizontal size={14} />
           </button>
         </div>
       </div>
 
       {/* Breadcrumbs Bar */}
       {activeFile && (
-        <div className="h-[22px] px-3 bg-[#1E1E1E] border-b border-[#282828]/60 flex items-center gap-1 text-[11px] text-[#858585]">
+        <div className="h-[24px] px-3.5 bg-[#1E1E1E] border-b border-[#282828]/60 flex items-center gap-1.5 text-[13px] text-[#858585]">
           <span className="text-[#666666]">workspace</span>
           {breadcrumbs.map((crumb, idx) => (
             <React.Fragment key={idx}>
-              <ChevronRight size={10} className="text-[#555555]" />
+              <ChevronRight size={11} className="text-[#555555]" />
               <span className={idx === breadcrumbs.length - 1 ? "text-[#CCCCCC] font-medium" : ""}>
                 {crumb}
               </span>
@@ -134,16 +134,16 @@ export default function EditorArea() {
             <div className="w-10 h-10 rounded-xl bg-[#252526] border border-[#333333] flex items-center justify-center text-[#858585] mb-2.5">
               <FileCode size={20} strokeWidth={1.5} />
             </div>
-            <h3 className="text-xs font-semibold text-[#CCCCCC]">No File Open</h3>
-            <p className="text-[11px] text-[#858585] max-w-xs mt-0.5">
+            <h3 className="text-[14px] font-semibold text-[#CCCCCC]">No File Open</h3>
+            <p className="text-[13px] text-[#858585] max-w-xs mt-1">
               Select a file from the explorer on the left or create a new component.
             </p>
-            <div className="flex items-center gap-2 mt-3">
+            <div className="flex items-center gap-2 mt-3.5">
               <button
                 onClick={() => createFile("/src", "App.tsx", "file")}
-                className="px-2.5 py-1 rounded bg-[#3B82F6] hover:bg-blue-500 text-white text-[11px] font-medium flex items-center gap-1.5 transition-colors"
+                className="px-3 py-1.5 rounded bg-[#3B82F6] hover:bg-blue-500 text-white text-[13px] font-medium flex items-center gap-1.5 transition-colors"
               >
-                <Plus size={12} strokeWidth={2} />
+                <Plus size={13} strokeWidth={2} />
                 <span>New File</span>
               </button>
             </div>

@@ -101,15 +101,15 @@ export default function TitleBar() {
   const menuItems = ["File", "Edit", "Selection", "View", "Go", "Run", "Terminal", "Help"];
 
   return (
-    <header className="h-[34px] bg-[#181818] border-b border-[#282828] flex items-center justify-between px-2 select-none text-[12px] text-[#CCCCCC] z-30 font-sans">
+    <header className="h-[38px] bg-[#181818] border-b border-[#282828] flex items-center justify-between px-2.5 select-none text-[14px] text-[#CCCCCC] z-30 font-sans">
       {/* Left: App Logo, Standard Menus, and Project Selector */}
-      <div className="flex items-center gap-1.5 h-full">
+      <div className="flex items-center gap-2 h-full">
         {/* App Logo */}
-        <div className="flex items-center gap-1.5 pr-1.5">
-          <div className="w-4 h-4 rounded bg-[#3B82F6] flex items-center justify-center text-white shadow-sm">
-            <Code2 size={11} strokeWidth={2.4} />
+        <div className="flex items-center gap-1.5 pr-2">
+          <div className="w-5 h-5 rounded bg-[#3B82F6] flex items-center justify-center text-white shadow-sm">
+            <Code2 size={13} strokeWidth={2.4} />
           </div>
-          <span className="font-semibold text-xs tracking-tight text-white hidden sm:inline">Ela</span>
+          <span className="font-semibold text-[14px] tracking-tight text-white hidden sm:inline">Ela</span>
         </div>
 
         {/* Minimal VS Code / Qoder Top Menus */}
@@ -126,7 +126,7 @@ export default function TitleBar() {
                     setActiveMenu(activeMenu === menu ? null : menu);
                   }
                 }}
-                className={`px-2 py-0.5 rounded text-[11.5px] hover:bg-[#2A2D32] hover:text-white transition-colors ${
+                className={`px-3 py-1 rounded text-[14px] font-medium hover:bg-[#2A2D32] hover:text-white transition-colors ${
                   activeMenu === menu ? "bg-[#2A2D32] text-white" : ""
                 }`}
               >
@@ -134,43 +134,43 @@ export default function TitleBar() {
               </button>
 
               {activeMenu === menu && menu === "File" && (
-                <div className="absolute left-0 top-full mt-0.5 w-48 bg-[#1E1E1E] border border-[#333333] rounded shadow-xl py-1 text-xs z-50">
+                <div className="absolute left-0 top-full mt-0.5 w-52 bg-[#1E1E1E] border border-[#333333] rounded shadow-xl py-1 text-[13px] z-50">
                   <div
                     onClick={() => {
                       createCloudProject("React Web App", "react");
                       setActiveMenu(null);
                     }}
-                    className="px-3 py-1.5 hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between"
+                    className="px-3 py-1.5 hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between text-[13px] font-medium"
                   >
                     <span>New Project</span>
-                    <span className="text-[10px] text-[#858585]">Ctrl+N</span>
+                    <span className="text-[11px] text-[#858585]">Ctrl+N</span>
                   </div>
                   <div
                     onClick={() => {
                       openFolderFromDisk();
                       setActiveMenu(null);
                     }}
-                    className="px-3 py-1.5 hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between"
+                    className="px-3 py-1.5 hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between text-[13px] font-medium"
                   >
                     <span>Open Folder...</span>
-                    <span className="text-[10px] text-[#858585]">Ctrl+O</span>
+                    <span className="text-[11px] text-[#858585]">Ctrl+O</span>
                   </div>
                   <div
                     onClick={() => {
                       saveCurrentProject();
                       setActiveMenu(null);
                     }}
-                    className="px-3 py-1.5 hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between"
+                    className="px-3 py-1.5 hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between text-[13px] font-medium"
                   >
                     <span>Save to Cloud</span>
-                    <span className="text-[10px] text-[#858585]">Ctrl+S</span>
+                    <span className="text-[11px] text-[#858585]">Ctrl+S</span>
                   </div>
                   <div
                     onClick={() => {
                       handleExportZip();
                       setActiveMenu(null);
                     }}
-                    className="px-3 py-1.5 hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between"
+                    className="px-3 py-1.5 hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between text-[13px] font-medium"
                   >
                     <span>Export ZIP</span>
                   </div>
@@ -181,34 +181,34 @@ export default function TitleBar() {
         </div>
 
         {/* Divider */}
-        <div className="w-[1px] h-3.5 bg-[#303030] mx-1 hidden sm:block" />
+        <div className="w-[1px] h-4 bg-[#303030] mx-1 hidden sm:block" />
 
-        {/* Project Selector (Mic Drops style from screenshot) */}
-        <div className="flex items-center gap-0.5" ref={projectsDropdownRef}>
+        {/* Project Selector (Workspace title: 15px, font-weight 600) */}
+        <div className="flex items-center gap-1" ref={projectsDropdownRef}>
           <button
             onClick={() => setIsProjectsDropdownOpen((v) => !v)}
-            className="h-6 px-2 rounded hover:bg-[#2A2D32] text-[#CCCCCC] hover:text-white text-[12px] font-medium flex items-center gap-1.5 transition-colors max-w-[150px] truncate"
+            className="h-7 px-2.5 rounded hover:bg-[#2A2D32] text-[#E4E4E7] hover:text-white text-[15px] font-semibold flex items-center gap-1.5 transition-colors max-w-[180px] truncate"
           >
             <span className="truncate">{currentProjectName || "Workspace"}</span>
-            <ChevronDown size={10} className="text-[#858585] shrink-0" />
+            <ChevronDown size={12} className="text-[#858585] shrink-0" />
           </button>
 
           <button
             title="Previous project"
-            className="p-1 text-[#858585] hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors hidden sm:inline-flex"
+            className="p-1.5 text-[#858585] hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors hidden sm:inline-flex"
           >
-            <ChevronLeft size={12} />
+            <ChevronLeft size={13} />
           </button>
           <button
             title="Next project"
-            className="p-1 text-[#858585] hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors hidden sm:inline-flex"
+            className="p-1.5 text-[#858585] hover:text-[#CCCCCC] hover:bg-[#2A2D32] rounded transition-colors hidden sm:inline-flex"
           >
-            <ChevronRight size={12} />
+            <ChevronRight size={13} />
           </button>
 
           {isProjectsDropdownOpen && (
-            <div className="absolute left-32 top-8 w-56 bg-[#1E1E1E] border border-[#333333] rounded-md shadow-2xl p-1 text-xs z-50">
-              <div className="px-2.5 py-1 text-[10px] font-semibold text-[#858585] uppercase tracking-wider">
+            <div className="absolute left-32 top-9 w-60 bg-[#1E1E1E] border border-[#333333] rounded-md shadow-2xl p-1 text-[13px] z-50">
+              <div className="px-2.5 py-1 text-[11px] font-semibold text-[#858585] uppercase tracking-wider">
                 Workspaces
               </div>
               {cloudProjects.map((proj) => (
@@ -218,10 +218,10 @@ export default function TitleBar() {
                     loadCloudProject(proj.id);
                     setIsProjectsDropdownOpen(false);
                   }}
-                  className="px-2.5 py-1.5 rounded hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between transition-colors"
+                  className="px-2.5 py-1.5 rounded hover:bg-[#04395E] hover:text-white cursor-pointer flex items-center justify-between transition-colors text-[13px]"
                 >
                   <span className="truncate font-medium">{proj.name}</span>
-                  <span className="text-[10px] text-[#858585]">{proj.updated_at || "saved"}</span>
+                  <span className="text-[11px] text-[#858585]">{proj.updated_at || "saved"}</span>
                 </div>
               ))}
 
@@ -232,9 +232,9 @@ export default function TitleBar() {
                   openFolderFromDisk();
                   setIsProjectsDropdownOpen(false);
                 }}
-                className="px-2.5 py-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] cursor-pointer flex items-center gap-2"
+                className="px-2.5 py-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] cursor-pointer flex items-center gap-2 text-[13px] font-medium"
               >
-                <FolderOpen size={11} className="text-amber-400" />
+                <FolderOpen size={13} className="text-amber-400" />
                 <span>Open Local Folder...</span>
               </div>
               <div
@@ -242,9 +242,9 @@ export default function TitleBar() {
                   createCloudProject("React Web App", "react");
                   setIsProjectsDropdownOpen(false);
                 }}
-                className="px-2.5 py-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] cursor-pointer flex items-center gap-2"
+                className="px-2.5 py-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] cursor-pointer flex items-center gap-2 text-[13px] font-medium"
               >
-                <Plus size={11} className="text-[#3B82F6]" />
+                <Plus size={13} className="text-[#3B82F6]" />
                 <span>New React Project</span>
               </div>
               <div
@@ -252,16 +252,16 @@ export default function TitleBar() {
                   createCloudProject("Python Analytics", "python");
                   setIsProjectsDropdownOpen(false);
                 }}
-                className="px-2.5 py-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] cursor-pointer flex items-center gap-2"
+                className="px-2.5 py-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] cursor-pointer flex items-center gap-2 text-[13px] font-medium"
               >
-                <Plus size={11} className="text-emerald-400" />
+                <Plus size={13} className="text-emerald-400" />
                 <span>New Python Project</span>
               </div>
               <div
                 onClick={handleExportZip}
-                className="px-2.5 py-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] cursor-pointer flex items-center gap-2"
+                className="px-2.5 py-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] cursor-pointer flex items-center gap-2 text-[13px] font-medium"
               >
-                <Download size={11} className="text-purple-400" />
+                <Download size={13} className="text-purple-400" />
                 <span>Download as ZIP</span>
               </div>
             </div>
@@ -269,32 +269,32 @@ export default function TitleBar() {
         </div>
       </div>
 
-      {/* Center: Open Qoder / Command Search Pill */}
-      <div className="flex-1 max-w-sm mx-2">
+      {/* Center: Command Search Pill */}
+      <div className="flex-1 max-w-sm mx-3">
         <button
           onClick={() => setIsCommandPaletteOpen(true)}
-          className="w-full h-6 bg-[#252526] hover:bg-[#2C2C2D] border border-[#383838] rounded-md flex items-center justify-between px-2.5 text-[#858585] hover:text-[#CCCCCC] transition-colors shadow-inner"
+          className="w-full h-7 bg-[#252526] hover:bg-[#2C2C2D] border border-[#383838] rounded-md flex items-center justify-between px-3 text-[#858585] hover:text-[#CCCCCC] transition-colors shadow-inner"
         >
           <div className="flex items-center gap-2 truncate">
-            <Compass size={11} className="text-[#3B82F6] shrink-0" />
-            <span className="truncate text-[11.5px]">
+            <Compass size={13} className="text-[#3B82F6] shrink-0" />
+            <span className="truncate text-[13px]">
               {activeFile ? `Ela IDE — ${activeFile.name}` : "Open Ela IDE (Ctrl+Shift+P)"}
             </span>
           </div>
-          <Search size={11} className="text-[#858585] shrink-0" />
+          <Search size={13} className="text-[#858585] shrink-0" />
         </button>
       </div>
 
       {/* Right: Actions, Panel Toggles, Window Controls */}
-      <div className="flex items-center gap-1.5 h-full">
-        {/* Run Button (Emerald / Green) */}
+      <div className="flex items-center gap-2 h-full">
+        {/* Run Button: 13px, font-weight 500 */}
         <button
           onClick={runProject}
           disabled={isRunning}
           title="Run Code (F5)"
-          className="h-5 px-2 rounded bg-[#10B981] hover:bg-[#059669] text-black font-semibold text-[11px] flex items-center gap-1 transition-colors shadow-sm disabled:opacity-50"
+          className="h-6 px-3 rounded bg-[#10B981] hover:bg-[#059669] text-black font-medium text-[13px] flex items-center gap-1.5 transition-colors shadow-sm disabled:opacity-50"
         >
-          <Play size={10} strokeWidth={2.4} fill="currentColor" />
+          <Play size={11} strokeWidth={2.4} fill="currentColor" />
           <span>{isRunning ? "Running..." : "Run"}</span>
         </button>
 
@@ -303,31 +303,31 @@ export default function TitleBar() {
           onClick={saveCurrentProject}
           disabled={isSavingProject}
           title="Save and Sync to Cloud"
-          className="h-6 w-6 rounded hover:bg-[#2A2D32] text-[#858585] hover:text-[#CCCCCC] flex items-center justify-center transition-colors"
+          className="h-7 w-7 rounded hover:bg-[#2A2D32] text-[#858585] hover:text-[#CCCCCC] flex items-center justify-center transition-colors"
         >
           {isSavingProject ? (
-            <Loader2 size={12} className="animate-spin text-[#3B82F6]" />
+            <Loader2 size={13} className="animate-spin text-[#3B82F6]" />
           ) : (
-            <Cloud size={12} />
+            <Cloud size={14} />
           )}
         </button>
 
-        {/* User Account */}
+        {/* User Account: Buttons 13px, font-weight 500 */}
         {user ? (
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setIsUserMenuOpen((v) => !v)}
-              className="h-6 px-1.5 rounded hover:bg-[#2A2D32] text-[#CCCCCC] text-[11.5px] flex items-center gap-1"
+              className="h-7 px-2 rounded hover:bg-[#2A2D32] text-[#CCCCCC] text-[13px] font-medium flex items-center gap-1.5"
             >
-              <div className="w-4 h-4 rounded-full bg-[#10B981]/20 text-[#10B981] font-semibold text-[9px] flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full bg-[#10B981]/20 text-[#10B981] font-semibold text-[11px] flex items-center justify-center">
                 {user.name.charAt(0).toUpperCase()}
               </div>
-              <span className="truncate max-w-[70px] hidden md:inline">{user.name}</span>
+              <span className="truncate max-w-[80px] hidden md:inline">{user.name}</span>
             </button>
 
             {isUserMenuOpen && (
-              <div className="absolute right-0 top-full mt-1 w-40 bg-[#1E1E1E] border border-[#333333] rounded-md shadow-2xl p-1 text-xs z-50">
-                <div className="px-2 py-1 text-[11px] text-[#858585] truncate border-b border-[#303030]">
+              <div className="absolute right-0 top-full mt-1 w-44 bg-[#1E1E1E] border border-[#333333] rounded-md shadow-2xl p-1 text-[13px] z-50">
+                <div className="px-2.5 py-1 text-[12px] text-[#858585] truncate border-b border-[#303030]">
                   {user.email}
                 </div>
                 <div
@@ -335,9 +335,9 @@ export default function TitleBar() {
                     setUser(null);
                     setIsUserMenuOpen(false);
                   }}
-                  className="px-2 py-1.5 rounded hover:bg-rose-950/40 text-rose-300 cursor-pointer flex items-center gap-1.5"
+                  className="px-2.5 py-1.5 rounded hover:bg-rose-950/40 text-rose-300 cursor-pointer flex items-center gap-1.5 text-[13px] font-medium"
                 >
-                  <LogOut size={11} />
+                  <LogOut size={13} />
                   <span>Sign Out</span>
                 </div>
               </div>
@@ -346,9 +346,9 @@ export default function TitleBar() {
         ) : (
           <button
             onClick={() => setIsAuthModalOpen(true)}
-            className="h-5 px-2 rounded bg-[#2A2D32] hover:bg-[#33373E] text-[#CCCCCC] hover:text-white text-[11px] font-medium flex items-center gap-1 transition-colors"
+            className="h-6 px-2.5 rounded bg-[#2A2D32] hover:bg-[#33373E] text-[#CCCCCC] hover:text-white text-[13px] font-medium flex items-center gap-1.5 transition-colors"
           >
-            <User size={10} />
+            <User size={12} />
             <span>Sign In</span>
           </button>
         )}
