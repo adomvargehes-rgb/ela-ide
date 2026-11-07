@@ -1,0 +1,98 @@
+import { AIProviderConfig, AIProviderId } from "@/types/ide";
+
+export const DEFAULT_AI_PROVIDERS: Record<AIProviderId, AIProviderConfig> = {
+  gemini: {
+    id: "gemini",
+    name: "Google Gemini",
+    endpoint: "https://generativelanguage.googleapis.com/v1beta",
+    apiKey: "",
+    selectedModel: "gemini-1.5-flash",
+    availableModels: [
+      "gemini-1.5-flash",
+      "gemini-1.5-pro",
+      "gemini-2.0-flash-exp",
+    ],
+    isEnabled: true,
+    isCustomEndpoint: false,
+    costPer1kTokensInput: 0.000075, // $0.075 / 1M tokens
+    costPer1kTokensOutput: 0.0003,  // $0.30 / 1M tokens
+    status: "idle",
+  },
+  deepseek: {
+    id: "deepseek",
+    name: "DeepSeek",
+    endpoint: "https://api.deepseek.com/v1",
+    apiKey: "",
+    selectedModel: "deepseek-coder",
+    availableModels: [
+      "deepseek-coder",
+      "deepseek-chat",
+      "deepseek-reasoner",
+    ],
+    isEnabled: true,
+    isCustomEndpoint: false,
+    costPer1kTokensInput: 0.00014, // $0.14 / 1M tokens
+    costPer1kTokensOutput: 0.00028,
+    status: "idle",
+  },
+  openrouter: {
+    id: "openrouter",
+    name: "OpenRouter",
+    endpoint: "https://openrouter.ai/api/v1",
+    apiKey: "",
+    selectedModel: "anthropic/claude-3.5-sonnet",
+    availableModels: [
+      "anthropic/claude-3.5-sonnet",
+      "openai/gpt-4o",
+      "meta-llama/llama-3.3-70b-instruct",
+      "google/gemini-2.0-flash-exp:free",
+      "deepseek/deepseek-r1",
+    ],
+    isEnabled: true,
+    isCustomEndpoint: false,
+    costPer1kTokensInput: 0.003,
+    costPer1kTokensOutput: 0.015,
+    status: "idle",
+  },
+  ollama: {
+    id: "ollama",
+    name: "Ollama (Local / Self-hosted)",
+    endpoint: "http://localhost:11434",
+    apiKey: "local-ollama",
+    selectedModel: "qwen2.5-coder:latest",
+    availableModels: [
+      "qwen2.5-coder:latest",
+      "llama3.2:latest",
+      "deepseek-coder:6.7b",
+      "codellama:latest",
+      "mistral:latest",
+    ],
+    isEnabled: false,
+    isCustomEndpoint: true,
+    costPer1kTokensInput: 0,
+    costPer1kTokensOutput: 0,
+    status: "idle",
+  },
+  openai: {
+    id: "openai",
+    name: "OpenAI / Custom Endpoint",
+    endpoint: "https://api.openai.com/v1",
+    apiKey: "",
+    selectedModel: "gpt-4o",
+    availableModels: [
+      "gpt-4o",
+      "gpt-4o-mini",
+      "o1-preview",
+      "o1-mini",
+    ],
+    isEnabled: true,
+    isCustomEndpoint: false,
+    costPer1kTokensInput: 0.0025,
+    costPer1kTokensOutput: 0.010,
+    status: "idle",
+  },
+};
+
+export const ESTIMATED_PRICING_TABLE = {
+  notice: "Pricing estimates are based on official API standard pay-as-you-go rates. API usage incurs real charges billed by the respective AI providers. Ensure valid billing is configured with each service.",
+};
