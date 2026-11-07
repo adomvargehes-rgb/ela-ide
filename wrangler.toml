@@ -12,3 +12,4 @@ bucket_name = "ela-ide-projects"
 [vars]
 ENVIRONMENT = "production"
 NEXT_PUBLIC_APP_NAME = "Ela IDE"
+
