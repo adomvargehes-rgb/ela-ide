@@ -9,6 +9,7 @@ import {
   Coins,
   CheckCircle2,
   Terminal,
+  Shield,
 } from "lucide-react";
 import { useIDE } from "@/context/IDEContext";
 
@@ -22,6 +23,7 @@ export default function StatusBar() {
     toggleBottomPanel,
     setBottomPanelTab,
     setIsBottomOpen,
+    setIsLegalModalOpen,
   } = useIDE();
 
   const errors = problems.filter((p) => p.severity === "error").length;
@@ -102,6 +104,17 @@ export default function StatusBar() {
         <div className="font-medium text-zinc-300">
           <span>{activeFile?.language?.toUpperCase() || "TYPESCRIPT"}</span>
         </div>
+
+        {/* Legal & Proprietary Licensing Policy */}
+        <button
+          onClick={() => setIsLegalModalOpen(true)}
+          title="ELA IDE Proprietary License & IP Protection Policy"
+          className="hidden md:flex items-center gap-1 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+        >
+          <Shield size={11} className="text-zinc-500" />
+          <span className="hidden xl:inline">Proprietary</span>
+          <span>© 2026</span>
+        </button>
 
         {/* Prettier / Format Check */}
         <div className="text-emerald-400" title="Code Formatter active">

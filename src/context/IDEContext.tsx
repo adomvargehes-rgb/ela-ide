@@ -97,6 +97,8 @@ interface IDEContextType {
   setUser: (user: { email: string; name: string } | null) => void;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
+  isLegalModalOpen: boolean;
+  setIsLegalModalOpen: (open: boolean) => void;
 
   // Cloud Projects
   currentProjectId: string;
@@ -201,6 +203,7 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
   // User & Auth state
   const [user, setUser] = useState<{ email: string; name: string } | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [isLegalModalOpen, setIsLegalModalOpen] = useState<boolean>(false);
 
   // Cloud Projects state
   const [currentProjectId, setCurrentProjectId] = useState<string>("proj-default");
@@ -819,6 +822,8 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
         setUser,
         isAuthModalOpen,
         setIsAuthModalOpen,
+        isLegalModalOpen,
+        setIsLegalModalOpen,
 
         currentProjectId,
         currentProjectName,

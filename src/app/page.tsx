@@ -11,8 +11,12 @@ import StatusBar from "@/components/layout/StatusBar";
 import CommandPalette from "@/components/command-palette/CommandPalette";
 import DiffViewModal from "@/components/editor/DiffViewModal";
 import AuthModal from "@/components/auth/AuthModal";
+import LegalModal from "@/components/legal/LegalModal";
+import { useIDE } from "@/context/IDEContext";
 
 export default function Home() {
+  const { isLegalModalOpen, setIsLegalModalOpen } = useIDE();
+
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-ide-bg text-ide-text select-none">
       {/* 1. VS Code Inspired Window Header */}
@@ -46,6 +50,10 @@ export default function Home() {
       <CommandPalette />
       <DiffViewModal />
       <AuthModal />
+      <LegalModal
+        isOpen={isLegalModalOpen}
+        onClose={() => setIsLegalModalOpen(false)}
+      />
     </div>
   );
 }
