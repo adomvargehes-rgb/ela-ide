@@ -3,17 +3,17 @@
 import React, { useState } from "react";
 import {
   Sparkles,
-  User,
   Copy,
   Check,
   FileDiff,
   Code,
+  AlertTriangle,
 } from "lucide-react";
 import { ChatMessage } from "@/types/ide";
 import { useIDE } from "@/context/IDEContext";
 
 export default function AIChatMessage({ message }: { message: ChatMessage }) {
-  const { setDiffReview, activeFile, updateFileContent, addOutputLog } = useIDE();
+  const { setDiffReview, activeFile, updateFileContent, addOutputLog, updateSettings } = useIDE();
   const [copiedCodeIdx, setCopiedCodeIdx] = useState<number | null>(null);
 
   const isAssistant = message.role === "assistant";
@@ -119,31 +119,43 @@ export default function AIChatMessage({ message }: { message: ChatMessage }) {
   if (!isAssistant) {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[85%] bg-zinc-800/80 border border-zinc-700/60 rounded-2xl rounded-tr-sm px-3.5 py-2.5 text-xs text-zinc-100 shadow-sm leading-relaxed">
+        <div className="max-w-[85%] bg-[#222226] text-zinc-200 text-xs px-3.5 py-1.5 rounded-lg border border-zinc-700/30 shadow-sm leading-relaxed">
           {message.content}
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="p-3 rounded-2xl bg-zinc-900/40 border border-zinc-800/60 text-xs text-zinc-200 space-y-2">
-      <div className="flex items-center justify-between text-[10px] text-zinc-500">
-        <div className="flex items-center gap-1.5 font-medium">
-          <Sparkles size={11} className="text-blue-400" />
-          <span className="text-zinc-300">Qoder Assistant</span>
-          {message.modelUsed && (
-            <span className="text-zinc-500 font-mono text-[9px] bg-zinc-800/60 px-1.5 py-0.2 rounded border border-zinc-700/40">
-              {message.modelUsed}
-            </span>
-          )}
-        </div>
-        <span>{message.timestamp}</span>
-      </div>
+  // Credit notice or error message styling matching Qoder
+  const isWarningOrError =
+    message.content.toLowerCase().includes("credit") ||
+    message.content.toLowerCase().includes("rate limit") ||
+    message.content.toLowerCase().includes("quota") ||
+    message.content.toLowerCase().includes("api key");
 
-      <div className="space-y-1.5 leading-relaxed text-zinc-300">
-        {renderFormattedContent(message.content)}
+  if (isWarningOrError) {
+    return (
+      <div className="text-xs text-zinc-300 space-y-2 leading-relaxed pt-1">
+        <div className="flex items-start gap-2">
+          <AlertTriangle size={13} className="text-amber-400 shrink-0 mt-0.5" />
+          <div className="space-y-2">
+            <div>{renderFormattedContent(message.content)}</div>
+            <button
+              onClick={() => updateSettings({ activeProviderId: "groq" })}
+              className="px-2.5 py-1 rounded-md bg-[#222226] hover:bg-[#2a2a2e] text-zinc-300 text-xs border border-zinc-700/50 transition-colors block"
+            >
+              Get More Credits / Switch to Free Models
+            </button>
+          </div>
+        </div>
       </div>
+    );
+  }
+
+  // Clean, borderless stream matching Qoder layout
+  return (
+    <div className="text-xs text-zinc-200 space-y-2 leading-relaxed">
+      {renderFormattedContent(message.content)}
     </div>
   );
 }

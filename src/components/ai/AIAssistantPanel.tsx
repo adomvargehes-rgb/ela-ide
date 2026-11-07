@@ -2,23 +2,20 @@
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import {
+  Infinity as InfinityIcon,
+  ChevronDown,
   Sparkles,
-  Zap,
-  Brain,
-  Paperclip,
   Mic,
   MicOff,
   Square,
   ArrowUp,
   X,
-  ChevronDown,
-  RotateCcw,
   FileCode,
-  FileText,
   Check,
-  Plus,
-  Terminal,
-  SlidersHorizontal,
+  ArrowUpCircle,
+  Gauge,
+  Bell,
+  Paperclip,
 } from "lucide-react";
 import { useIDE } from "@/context/IDEContext";
 import { AIMode, AIProviderId, FileItem } from "@/types/ide";
@@ -35,31 +32,31 @@ const SLASH_COMMANDS: SlashCommand[] = [
   {
     command: "/agent",
     label: "Agent Mode",
-    description: "Autonomous multi-step task execution, file creation and updates",
+    description: "Autonomous multi-step coding, file creation & terminal execution",
     mode: "agent",
   },
   {
     command: "/chat",
     label: "Chat",
-    description: "General pair programming, questions, and discussions",
+    description: "General pair programming, questions, and explanations",
     mode: "chat",
   },
   {
     command: "/fix",
     label: "Fix Bugs",
-    description: "Analyze code for errors, race conditions, and generate fixes",
+    description: "Scan code for errors and generate root-cause fix",
     mode: "bugfix",
   },
   {
     command: "/refactor",
     label: "Refactor",
-    description: "Clean up code architecture, modernize patterns, and optimize",
+    description: "Modernize architecture, clean up code, and extract hooks",
     mode: "edit",
   },
   {
     command: "/explain",
     label: "Explain Code",
-    description: "In-depth breakdown of code logic, flow, and architecture",
+    description: "Detailed walkthrough of logic and architecture",
     mode: "explain",
   },
 ];
@@ -67,7 +64,6 @@ const SLASH_COMMANDS: SlashCommand[] = [
 export default function AIAssistantPanel() {
   const {
     isAIPanelOpen,
-    setIsAIPanelOpen,
     chatMessages,
     isAILoading,
     sendAIMessage,
@@ -77,11 +73,12 @@ export default function AIAssistantPanel() {
     settings,
     updateSettings,
     updateProviderConfig,
+    tokenStats,
   } = useIDE();
 
   const [inputPrompt, setInputPrompt] = useState("");
   const [mode, setMode] = useState<AIMode>("agent");
-  const [isThinkingEnabled, setIsThinkingEnabled] = useState(false);
+  const [isModeDropdownOpen, setIsModeDropdownOpen] = useState(false);
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [isSlashMenuOpen, setIsSlashMenuOpen] = useState(false);
   const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
@@ -92,13 +89,14 @@ export default function AIAssistantPanel() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modelDropdownRef = useRef<HTMLDivElement>(null);
+  const modeDropdownRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages, isAILoading]);
 
-  // Click outside to close model dropdown
+  // Click outside listener for dropdowns
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -106,6 +104,12 @@ export default function AIAssistantPanel() {
         !modelDropdownRef.current.contains(event.target as Node)
       ) {
         setIsModelDropdownOpen(false);
+      }
+      if (
+        modeDropdownRef.current &&
+        !modeDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsModeDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -127,18 +131,11 @@ export default function AIAssistantPanel() {
     return list;
   }, [files]);
 
-  // Auto-attach active file if none attached
-  useEffect(() => {
-    if (activeFile && attachedFiles.length === 0) {
-      setAttachedFiles([{ path: activeFile.path, name: activeFile.name }]);
-    }
-  }, [activeFile]);
-
   if (!isAIPanelOpen) return null;
 
   const activeProvider = providers[settings.activeProviderId];
 
-  // Flat list of all available models across enabled providers
+  // List of all models
   const allAvailableModels: {
     providerId: AIProviderId;
     providerName: string;
@@ -164,7 +161,6 @@ export default function AIAssistantPanel() {
     const value = e.target.value;
     setInputPrompt(value);
 
-    // Trigger slash commands menu when starts with "/"
     if (value.startsWith("/") && !value.includes(" ")) {
       setIsSlashMenuOpen(true);
       setIsFilePickerOpen(false);
@@ -191,8 +187,7 @@ export default function AIAssistantPanel() {
       }
       if (e.key === "Enter" || e.key === "Tab") {
         e.preventDefault();
-        const selected = SLASH_COMMANDS[selectedSlashIndex];
-        applySlashCommand(selected);
+        applySlashCommand(SLASH_COMMANDS[selectedSlashIndex]);
         return;
       }
       if (e.key === "Escape") {
@@ -218,7 +213,6 @@ export default function AIAssistantPanel() {
     if (!attachedFiles.some((item) => item.path === f.path)) {
       setAttachedFiles((prev) => [...prev, f]);
     }
-    // Remove the trailing '@' if present
     if (inputPrompt.endsWith("@")) {
       setInputPrompt((prev) => prev.slice(0, -1));
     }
@@ -235,7 +229,6 @@ export default function AIAssistantPanel() {
     const promptText = inputPrompt.trim();
     if (!promptText || isAILoading) return;
 
-    // Check for inline slash command execution
     let finalPrompt = promptText;
     let finalMode = mode;
 
@@ -247,14 +240,9 @@ export default function AIAssistantPanel() {
       }
     }
 
-    // Append context from explicitly attached files
     if (attachedFiles.length > 0) {
-      const contextHeaders = attachedFiles.map((f) => `Referenced file: ${f.path}`).join("\n");
-      finalPrompt = `${finalPrompt}\n\n[Active Context References:\n${contextHeaders}]`;
-    }
-
-    if (isThinkingEnabled) {
-      finalPrompt = `[Thinking Mode: Enabled. Please reason step-by-step through first principles before generating code]\n${finalPrompt}`;
+      const contextHeaders = attachedFiles.map((f) => `Context File: ${f.path}`).join("\n");
+      finalPrompt = `${finalPrompt}\n\n[Active Workspace References:\n${contextHeaders}]`;
     }
 
     setInputPrompt("");
@@ -269,15 +257,11 @@ export default function AIAssistantPanel() {
     setIsModelDropdownOpen(false);
   };
 
-  // Browser speech recognition toggle
-  const toggleSpeechRecognition = () => {
+  const toggleSpeech = () => {
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
-      alert("Speech recognition is not supported in this browser. Please use Chrome or Edge.");
-      return;
-    }
+    if (!SpeechRecognition) return;
 
     if (isListening) {
       setIsListening(false);
@@ -286,19 +270,13 @@ export default function AIAssistantPanel() {
 
     try {
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = "en-US";
-
       recognition.onstart = () => setIsListening(true);
       recognition.onend = () => setIsListening(false);
       recognition.onerror = () => setIsListening(false);
-
       recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInputPrompt((prev) => (prev ? `${prev} ${transcript}` : transcript));
+        const text = event.results[0][0].transcript;
+        setInputPrompt((prev) => (prev ? `${prev} ${text}` : text));
       };
-
       recognition.start();
     } catch {
       setIsListening(false);
@@ -306,64 +284,29 @@ export default function AIAssistantPanel() {
   };
 
   return (
-    <div className="w-80 md:w-96 bg-[#121214] border-l border-zinc-800/80 flex flex-col h-full shrink-0 select-none overflow-hidden z-20 font-sans">
-      {/* 1. Minimal Top Toolbar (Single-line, zero clutter, no large headers) */}
-      <div className="h-9 px-3 border-b border-zinc-800/60 flex items-center justify-between text-xs text-zinc-400">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-zinc-800/60 text-zinc-300 text-[11px] font-medium border border-zinc-700/50">
-            <Sparkles size={11} className="text-blue-400" />
-            <span>Qoder AI</span>
-          </div>
-          {mode === "agent" && (
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-purple-950/60 text-purple-300 border border-purple-800/40">
-              AGENT
-            </span>
-          )}
-        </div>
+    <div className="w-80 md:w-96 bg-[#121214] border-l border-zinc-800/60 flex flex-col h-full shrink-0 select-none overflow-hidden z-20 font-sans">
+      {/* ZERO top bar, ZERO headers — pure, clean Qoder stream */}
 
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => {
-              setInputPrompt("");
-              setAttachedFiles([]);
-            }}
-            title="New Conversation"
-            className="p-1 hover:text-zinc-200 text-zinc-500 rounded hover:bg-zinc-800 transition-colors"
-          >
-            <Plus size={13} />
-          </button>
-          <button
-            onClick={() => setIsAIPanelOpen(false)}
-            title="Close Assistant"
-            className="p-1 hover:text-zinc-200 text-zinc-500 rounded hover:bg-zinc-800 transition-colors"
-          >
-            <X size={13} />
-          </button>
-        </div>
-      </div>
-
-      {/* 2. Messages Stream */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+      {/* 1. Chat Message Stream */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {chatMessages.map((msg) => (
           <AIChatMessage key={msg.id} message={msg} />
         ))}
 
         {isAILoading && (
-          <div className="p-3 rounded-xl border border-zinc-800/80 bg-zinc-900/40 text-xs text-zinc-400 flex items-center gap-2.5">
-            <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
-            <span className="font-medium text-zinc-300">
-              {mode === "agent" ? "Autonomous agent reasoning & planning..." : "Generating response..."}
-            </span>
+          <div className="flex items-center gap-2 text-xs text-zinc-400 py-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Agent is working...</span>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 3. Slash Commands Popup */}
+      {/* 2. Slash Commands Menu Popup */}
       {isSlashMenuOpen && (
-        <div className="mx-3 mb-1 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden p-1 space-y-0.5 text-xs z-30">
+        <div className="mx-4 mb-2 bg-[#1a1a1e] border border-zinc-800 rounded-xl shadow-2xl p-1.5 space-y-0.5 text-xs z-30">
           <div className="px-2 py-1 text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">
-            Slash Commands
+            Commands
           </div>
           {SLASH_COMMANDS.map((cmd, idx) => (
             <div
@@ -371,56 +314,53 @@ export default function AIAssistantPanel() {
               onClick={() => applySlashCommand(cmd)}
               onMouseEnter={() => setSelectedSlashIndex(idx)}
               className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${
-                selectedSlashIndex === idx ? "bg-blue-600 text-white" : "text-zinc-300 hover:bg-zinc-800"
+                selectedSlashIndex === idx ? "bg-zinc-800 text-white" : "text-zinc-300 hover:bg-zinc-800/60"
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="font-mono font-semibold">{cmd.command}</span>
+                <span className="font-mono text-emerald-400 font-semibold">{cmd.command}</span>
                 <span className="text-zinc-400 text-[11px] truncate">{cmd.description}</span>
               </div>
-              <span className="text-[10px] uppercase font-mono px-1 rounded bg-zinc-800 text-zinc-400">
-                {cmd.mode}
-              </span>
             </div>
           ))}
         </div>
       )}
 
-      {/* 4. File Mention (@) Context Picker Popup */}
+      {/* 3. File Context (@) Menu Popup */}
       {isFilePickerOpen && (
-        <div className="mx-3 mb-1 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden p-1 max-h-48 overflow-y-auto space-y-0.5 text-xs z-30">
+        <div className="mx-4 mb-2 bg-[#1a1a1e] border border-zinc-800 rounded-xl shadow-2xl p-1.5 max-h-48 overflow-y-auto space-y-0.5 text-xs z-30">
           <div className="px-2 py-1 text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">
-            Attach Workspace File
+            Workspace Files
           </div>
           {allWorkspaceFiles.map((f) => (
             <div
               key={f.path}
               onClick={() => attachFile(f)}
-              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer text-zinc-300 hover:bg-zinc-800 transition-colors"
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer text-zinc-300 hover:bg-zinc-800 transition-colors font-mono text-[11px]"
             >
-              <FileCode size={13} className="text-blue-400 shrink-0" />
-              <span className="truncate flex-1 font-mono text-[11px]">{f.path}</span>
+              <FileCode size={12} className="text-blue-400 shrink-0" />
+              <span className="truncate">{f.path}</span>
             </div>
           ))}
         </div>
       )}
 
-      {/* 5. Unified Qoder-Style Composer Container */}
-      <div className="p-3 bg-[#121214]">
-        <div className="relative flex flex-col bg-zinc-900/90 border border-zinc-800/90 focus-within:border-zinc-700 rounded-2xl p-2.5 transition-all shadow-lg focus-within:ring-1 focus-within:ring-zinc-700">
-          {/* Attached context chips row */}
+      {/* 4. Qoder Composer Input Container */}
+      <div className="px-3 pb-1">
+        <div className="bg-[#18181b] rounded-2xl p-3 border border-zinc-800/80 shadow-lg focus-within:border-zinc-700 transition-all">
+          {/* Attached Files Chips */}
           {attachedFiles.length > 0 && (
-            <div className="flex items-center gap-1.5 flex-wrap pb-1.5 mb-1.5 border-b border-zinc-800/60">
+            <div className="flex items-center gap-1.5 flex-wrap pb-2 mb-2 border-b border-zinc-800/60">
               {attachedFiles.map((file) => (
                 <div
                   key={file.path}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-800/80 border border-zinc-700/60 text-[11px] text-zinc-300 font-mono"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-800/80 text-[11px] text-zinc-300 font-mono"
                 >
                   <FileCode size={11} className="text-blue-400 shrink-0" />
                   <span className="truncate max-w-[120px]">{file.name}</span>
                   <button
                     onClick={() => removeAttachedFile(file.path)}
-                    className="p-0.5 hover:text-rose-400 text-zinc-500"
+                    className="p-0.5 hover:text-white text-zinc-500"
                   >
                     <X size={10} />
                   </button>
@@ -429,79 +369,80 @@ export default function AIAssistantPanel() {
             </div>
           )}
 
-          {/* Autosizing textarea */}
+          {/* Clean Composer Textarea */}
           <textarea
             ref={textareaRef}
             value={inputPrompt}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Plan and build, @ for context, / for commands"
+            placeholder="Ask for follow up changes"
             rows={2}
-            className="w-full bg-transparent text-xs text-zinc-100 placeholder-zinc-500 outline-none resize-none font-sans leading-relaxed scrollbar-none"
+            className="w-full bg-transparent text-xs text-zinc-200 placeholder-zinc-500 outline-none resize-none font-sans leading-relaxed scrollbar-none"
           />
 
-          {/* Bottom Controls Row inside Composer */}
-          <div className="flex items-center justify-between pt-1.5 mt-1 border-t border-zinc-800/60">
-            {/* Left Controls: Attach, Mode, Thinking, Model Selector */}
-            <div className="flex items-center gap-1 flex-wrap">
-              {/* Attachment / File context button */}
-              <button
-                type="button"
-                onClick={() => setIsFilePickerOpen((v) => !v)}
-                title="Attach file context (@)"
-                className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
-              >
-                <Paperclip size={13} />
-              </button>
+          {/* Controls Bar */}
+          <div className="flex items-center justify-between pt-2">
+            {/* Left Controls: [ Ꝏ Agent ⌄ ] and [ Auto ⌄ ] */}
+            <div className="flex items-center gap-1.5">
+              {/* Mode Selector Pill: Ꝏ Agent ⌄ */}
+              <div className="relative" ref={modeDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsModeDropdownOpen((v) => !v)}
+                  className="h-7 px-2.5 rounded-lg bg-[#27272a]/70 hover:bg-[#27272a] text-zinc-300 text-xs font-medium flex items-center gap-1.5 transition-colors border border-zinc-700/40"
+                >
+                  <InfinityIcon size={13} className="text-zinc-400" />
+                  <span className="capitalize">{mode === "agent" ? "Agent" : "Chat"}</span>
+                  <ChevronDown size={11} className="text-zinc-500" />
+                </button>
 
-              {/* Mode Selector Pill (Agent vs Chat) */}
-              <button
-                type="button"
-                onClick={() => setMode((m) => (m === "agent" ? "chat" : "agent"))}
-                title="Toggle Mode"
-                className={`px-2 py-0.5 rounded-lg text-[11px] font-medium flex items-center gap-1 transition-colors border ${
-                  mode === "agent"
-                    ? "bg-purple-950/40 text-purple-300 border-purple-800/50"
-                    : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-zinc-200"
-                }`}
-              >
-                {mode === "agent" ? <Zap size={11} /> : <Sparkles size={11} />}
-                <span className="capitalize">{mode}</span>
-              </button>
+                {isModeDropdownOpen && (
+                  <div className="absolute left-0 bottom-full mb-1.5 w-36 bg-[#1a1a1e] border border-zinc-800 rounded-xl shadow-2xl p-1 text-xs space-y-0.5 z-40">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMode("agent");
+                        setIsModeDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
+                        mode === "agent" ? "bg-zinc-800 text-white font-medium" : "text-zinc-300 hover:bg-zinc-800/60"
+                      }`}
+                    >
+                      <span>Agent</span>
+                      {mode === "agent" && <Check size={11} />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMode("chat");
+                        setIsModeDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
+                        mode === "chat" ? "bg-zinc-800 text-white font-medium" : "text-zinc-300 hover:bg-zinc-800/60"
+                      }`}
+                    >
+                      <span>Chat</span>
+                      {mode === "chat" && <Check size={11} />}
+                    </button>
+                  </div>
+                )}
+              </div>
 
-              {/* Thinking / Reasoning Toggle */}
-              <button
-                type="button"
-                onClick={() => setIsThinkingEnabled((v) => !v)}
-                title="Toggle Reasoning / Deep Thinking mode"
-                className={`px-2 py-0.5 rounded-lg text-[11px] font-medium flex items-center gap-1 transition-colors border ${
-                  isThinkingEnabled
-                    ? "bg-amber-950/40 text-amber-300 border-amber-800/50"
-                    : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-zinc-200"
-                }`}
-              >
-                <Brain size={11} />
-                <span>Think</span>
-              </button>
-
-              {/* Compact Model Selector */}
+              {/* Model Selector Pill: Auto ⌄ */}
               <div className="relative" ref={modelDropdownRef}>
                 <button
                   type="button"
                   onClick={() => setIsModelDropdownOpen((v) => !v)}
-                  className="px-2 py-0.5 rounded-lg bg-zinc-800/60 hover:bg-zinc-800 text-[11px] text-zinc-300 border border-zinc-700/50 flex items-center gap-1 transition-colors max-w-[130px] truncate"
+                  className="h-7 px-2.5 rounded-lg bg-[#27272a]/70 hover:bg-[#27272a] text-zinc-300 text-xs font-medium flex items-center gap-1.5 transition-colors border border-zinc-700/40 max-w-[140px] truncate"
                 >
-                  <span className="truncate font-mono text-[10px]">
-                    {activeProvider?.selectedModel}
-                  </span>
-                  <ChevronDown size={10} className="shrink-0 text-zinc-500" />
+                  <span className="truncate">{activeProvider?.selectedModel ? activeProvider.selectedModel.split("/").pop() : "Auto"}</span>
+                  <ChevronDown size={11} className="text-zinc-500 shrink-0" />
                 </button>
 
-                {/* Model Dropdown Menu */}
                 {isModelDropdownOpen && (
-                  <div className="absolute left-0 bottom-full mb-1 w-64 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl p-1.5 max-h-56 overflow-y-auto space-y-0.5 text-xs z-50">
+                  <div className="absolute left-0 bottom-full mb-1.5 w-64 bg-[#1a1a1e] border border-zinc-800 rounded-xl shadow-2xl p-1.5 max-h-56 overflow-y-auto space-y-0.5 text-xs z-50">
                     <div className="px-2 py-1 text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">
-                      Select Active Model
+                      Available Models
                     </div>
                     {allAvailableModels.map((item, idx) => {
                       const isSelected =
@@ -513,22 +454,20 @@ export default function AIAssistantPanel() {
                           key={`${item.providerId}-${item.model}-${idx}`}
                           onClick={() => handleModelSelect(item.providerId, item.model)}
                           className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${
-                            isSelected
-                              ? "bg-blue-600 text-white"
-                              : "text-zinc-300 hover:bg-zinc-800"
+                            isSelected ? "bg-zinc-800 text-white" : "text-zinc-300 hover:bg-zinc-800/60"
                           }`}
                         >
                           <div className="truncate min-w-0 pr-1">
                             <span className="truncate font-mono text-[11px] block">{item.model}</span>
-                            <span className="text-[10px] text-zinc-400 block">{item.providerName}</span>
+                            <span className="text-[10px] text-zinc-500 block">{item.providerName}</span>
                           </div>
                           <div className="flex items-center gap-1 shrink-0">
                             {item.isFree && (
-                              <span className="text-[9px] font-mono px-1 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/50">
+                              <span className="text-[9px] font-mono px-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">
                                 FREE
                               </span>
                             )}
-                            {isSelected && <Check size={12} strokeWidth={2.5} />}
+                            {isSelected && <Check size={11} strokeWidth={2.5} />}
                           </div>
                         </div>
                       );
@@ -538,44 +477,80 @@ export default function AIAssistantPanel() {
               </div>
             </div>
 
-            {/* Right Controls: Mic & Send/Cancel */}
-            <div className="flex items-center gap-1.5 shrink-0 ml-1">
-              {/* Mic / Voice input */}
+            {/* Right Controls: Sparkle, Mic, and Green Square Button */}
+            <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={toggleSpeechRecognition}
-                title={isListening ? "Listening... Click to stop" : "Voice input"}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  isListening
-                    ? "text-rose-400 bg-rose-950/40 animate-pulse"
-                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
-                }`}
+                onClick={() => setIsFilePickerOpen((v) => !v)}
+                title="Attach context (@)"
+                className="text-zinc-500 hover:text-zinc-300 transition-colors p-1"
               >
-                {isListening ? <MicOff size={13} /> : <Mic size={13} />}
+                <Sparkles size={14} />
               </button>
 
-              {/* Send or Stop button */}
+              <button
+                type="button"
+                onClick={toggleSpeech}
+                title={isListening ? "Listening... click to stop" : "Voice input"}
+                className={`p-1 transition-colors ${
+                  isListening ? "text-rose-400 animate-pulse" : "text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                {isListening ? <MicOff size={14} /> : <Mic size={14} />}
+              </button>
+
+              {/* Exact Qoder Green Action Button */}
               {isAILoading ? (
                 <button
                   type="button"
-                  title="Cancel generation"
-                  className="w-7 h-7 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center transition-colors shadow"
+                  title="Stop generating"
+                  className="w-7 h-7 rounded-lg bg-emerald-500 hover:bg-emerald-400 flex items-center justify-center transition-colors shadow-sm"
                 >
-                  <Square size={10} fill="currentColor" />
+                  <Square size={9} className="text-black" fill="currentColor" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={handleSubmit}
                   disabled={!inputPrompt.trim()}
-                  title="Send (Enter)"
-                  className="w-7 h-7 rounded-full bg-white text-black hover:bg-zinc-200 disabled:opacity-30 disabled:hover:bg-white flex items-center justify-center transition-colors shadow"
+                  title="Submit (Enter)"
+                  className="w-7 h-7 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-30 disabled:hover:bg-emerald-500 flex items-center justify-center transition-colors shadow-sm"
                 >
-                  <ArrowUp size={13} strokeWidth={2.5} />
+                  <Square size={9} className="text-black" fill="currentColor" />
                 </button>
               )}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 5. Minimal Qoder Bottom Status Bar */}
+      <div className="h-6 px-3 flex items-center justify-between text-[11px] text-zinc-500 border-t border-zinc-900 bg-[#121214] select-none">
+        <div className="flex items-center gap-1 hover:text-zinc-300 cursor-pointer text-[10px]">
+          <span>⇥ NEXT</span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => updateSettings({ activeProviderId: "groq" })}
+            title="Fast Free Models Active"
+            className="flex items-center gap-1 hover:text-zinc-300 transition-colors"
+          >
+            <ArrowUpCircle size={11} className="text-zinc-400" />
+            <span>Free - Upgrade</span>
+          </button>
+
+          <div
+            title={`Token Usage: ${tokenStats.totalPromptTokens + tokenStats.totalCompletionTokens} tokens`}
+            className="flex items-center gap-1 hover:text-zinc-300 cursor-help"
+          >
+            <Gauge size={11} className="text-zinc-400" />
+            <span>Usage</span>
+          </div>
+
+          <button title="Notifications" className="hover:text-zinc-300 transition-colors">
+            <Bell size={11} />
+          </button>
         </div>
       </div>
     </div>

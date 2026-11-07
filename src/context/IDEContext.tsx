@@ -172,23 +172,7 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
   // AI & Providers
   const [providers, setProviders] = useState<Record<AIProviderId, AIProviderConfig>>(DEFAULT_AI_PROVIDERS);
   const [settings, setSettings] = useState<IDESettings>(DEFAULT_SETTINGS);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: "msg-welcome",
-      role: "assistant",
-      content: `👋 Welcome to **Ela IDE**!
-
-I am your multi-model AI coding partner with full workspace awareness.
-- ⚡ **Models Available:** Gemini, DeepSeek, OpenRouter, Ollama, and OpenAI endpoints.
-- 🛠️ **Agent Mode:** Can plan multi-step edits and generate side-by-side diffs.
-- 🚀 **Live Sandbox:** Run code directly and preview interactive web apps.
-
-Select any file to begin, or type a request below!`,
-      timestamp: new Date().toLocaleTimeString(),
-      modelUsed: "gemini-1.5-flash",
-      providerUsed: "gemini",
-    },
-  ]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isAILoading, setIsAILoading] = useState<boolean>(false);
   const [tokenStats, setTokenStats] = useState<TokenUsageStats>({
     totalPromptTokens: 140,
