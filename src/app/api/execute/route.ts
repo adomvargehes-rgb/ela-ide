@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { executeCode } from "@/lib/execution/runner";
 
+export const runtime = "edge";
+
 export async function POST(req: NextRequest) {
   try {
     const { language, code, files } = await req.json();

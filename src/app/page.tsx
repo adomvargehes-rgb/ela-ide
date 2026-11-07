@@ -10,6 +10,7 @@ import BottomPanel from "@/components/layout/BottomPanel";
 import StatusBar from "@/components/layout/StatusBar";
 import CommandPalette from "@/components/command-palette/CommandPalette";
 import DiffViewModal from "@/components/editor/DiffViewModal";
+import AuthModal from "@/components/auth/AuthModal";
 
 export default function Home() {
   return (
@@ -44,6 +45,7 @@ export default function Home() {
       {/* 4. Global Modals */}
       <CommandPalette />
       <DiffViewModal />
+      <AuthModal />
     </div>
   );
 }

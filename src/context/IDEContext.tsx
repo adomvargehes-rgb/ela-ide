@@ -22,6 +22,7 @@ import { DEFAULT_AI_PROVIDERS } from "@/lib/ai/providers";
 import { routeAIRequest } from "@/lib/ai/router";
 import { buildProjectContextPrompt } from "@/lib/ai/prompts";
 import { executeCode } from "@/lib/execution/runner";
+import { PROJECT_TEMPLATES } from "@/lib/storage/templates";
 
 interface IDEContextType {
   // Files and Editor
@@ -90,6 +91,22 @@ interface IDEContextType {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   searchResults: { path: string; line: number; text: string }[];
+
+  // User & Auth
+  user: { email: string; name: string } | null;
+  setUser: (user: { email: string; name: string } | null) => void;
+  isAuthModalOpen: boolean;
+  setIsAuthModalOpen: (open: boolean) => void;
+
+  // Cloud Projects
+  currentProjectId: string;
+  currentProjectName: string;
+  setCurrentProjectName: (name: string) => void;
+  cloudProjects: { id: string; name: string; updated_at?: string }[];
+  isSavingProject: boolean;
+  saveCurrentProject: () => Promise<void>;
+  loadCloudProject: (id: string) => Promise<void>;
+  createCloudProject: (name: string, templateId?: string) => Promise<void>;
 }
 
 const DEFAULT_SETTINGS: IDESettings = {
@@ -180,6 +197,112 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
     estimatedCostUSD: 0.0001,
     requestCount: 1,
   });
+
+  // User & Auth state
+  const [user, setUser] = useState<{ email: string; name: string } | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+
+  // Cloud Projects state
+  const [currentProjectId, setCurrentProjectId] = useState<string>("proj-default");
+  const [currentProjectName, setCurrentProjectName] = useState<string>("My Next.js Application");
+  const [cloudProjects, setCloudProjects] = useState<{ id: string; name: string; updated_at?: string }[]>([
+    { id: "proj-default", name: "My Next.js Application", updated_at: "Just now" },
+  ]);
+  const [isSavingProject, setIsSavingProject] = useState<boolean>(false);
+
+  // Save current project to cloud
+  const saveCurrentProject = useCallback(async () => {
+    setIsSavingProject(true);
+    try {
+      const res = await fetch(`/api/projects/${currentProjectId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: currentProjectName,
+          files,
+          settings,
+        }),
+      });
+      if (res.ok) {
+        setOutputLogs((prev) => [
+          ...prev,
+          {
+            id: `log-${Date.now()}`,
+            timestamp: new Date().toLocaleTimeString(),
+            type: "success",
+            message: `Project "${currentProjectName}" successfully synced to cloud storage.`,
+          },
+        ]);
+      }
+    } catch (err: any) {
+      console.warn("Cloud save warning:", err);
+    } finally {
+      setIsSavingProject(false);
+    }
+  }, [currentProjectId, currentProjectName, files, settings]);
+
+  // Load cloud project
+  const loadCloudProject = useCallback(async (id: string) => {
+    try {
+      const res = await fetch(`/api/projects/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.project?.files_json) {
+          const parsed = JSON.parse(data.project.files_json);
+          setFiles(parsed);
+          setCurrentProjectId(id);
+          setCurrentProjectName(data.project.name || "Cloud Project");
+          setOutputLogs((prev) => [
+            ...prev,
+            {
+              id: `log-${Date.now()}`,
+              timestamp: new Date().toLocaleTimeString(),
+              type: "success",
+              message: `Loaded cloud workspace: ${data.project.name}`,
+            },
+          ]);
+        }
+      }
+    } catch (err: any) {
+      console.warn("Failed to load project:", err);
+    }
+  }, []);
+
+  // Create new cloud project
+  const createCloudProject = useCallback(async (name: string, templateId = "react") => {
+    try {
+      const template = PROJECT_TEMPLATES[templateId] || PROJECT_TEMPLATES.react;
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          template_id: templateId,
+          files: template.files,
+          settings,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const newProj = data.project;
+        setCloudProjects((prev) => [newProj, ...prev]);
+        setCurrentProjectId(newProj.id);
+        setCurrentProjectName(newProj.name);
+        setFiles(template.files);
+        setOutputLogs((prev) => [
+          ...prev,
+          {
+            id: `log-${Date.now()}`,
+            timestamp: new Date().toLocaleTimeString(),
+            type: "success",
+            message: `Created new cloud workspace: ${newProj.name}`,
+          },
+        ]);
+      }
+    } catch (err: any) {
+      console.warn("Failed to create project:", err);
+    }
+  }, [settings]);
 
   // Find file recursively
   const findFileByPath = useCallback((items: FileItem[], path: string): FileItem | null => {
@@ -691,6 +814,20 @@ export function IDEProvider({ children }: { children: React.ReactNode }) {
         searchQuery,
         setSearchQuery,
         searchResults,
+
+        user,
+        setUser,
+        isAuthModalOpen,
+        setIsAuthModalOpen,
+
+        currentProjectId,
+        currentProjectName,
+        setCurrentProjectName,
+        cloudProjects,
+        isSavingProject,
+        saveCurrentProject,
+        loadCloudProject,
+        createCloudProject,
       }}
     >
       {children}

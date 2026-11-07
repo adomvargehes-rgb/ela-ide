@@ -9,8 +9,11 @@ export const DEFAULT_AI_PROVIDERS: Record<AIProviderId, AIProviderConfig> = {
     selectedModel: "gemini-1.5-flash",
     availableModels: [
       "gemini-1.5-flash",
-      "gemini-1.5-pro",
+      "gemini-1.5-flash-8b",
       "gemini-2.0-flash-exp",
+      "gemini-1.5-pro",
+      "gemma-2-27b-it",
+      "gemma-2-9b-it",
     ],
     isEnabled: true,
     isCustomEndpoint: false,
