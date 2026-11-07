@@ -249,7 +249,7 @@ export async function routeAIRequest(req: AICompletionRequest): Promise<AIComple
 
   const providerOrder: AIProviderId[] = [
     primaryProviderId,
-    ...((["gemini", "deepseek", "openrouter", "openai", "ollama"] as AIProviderId[]).filter(
+    ...((["groq", "cerebras", "sambanova", "gemini", "nvidia", "openrouter", "deepseek", "openai", "ollama"] as AIProviderId[]).filter(
       (id) => id !== primaryProviderId
     )),
   ];

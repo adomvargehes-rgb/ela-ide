@@ -107,6 +107,10 @@ const DEFAULT_SETTINGS: IDESettings = {
   ollamaEndpoint: "http://localhost:11434",
   openaiApiKey: "",
   openaiEndpoint: "https://api.openai.com/v1",
+  groqApiKey: "",
+  cerebrasApiKey: "",
+  sambanovaApiKey: "",
+  nvidiaApiKey: "",
 };
 
 const IDEContext = createContext<IDEContextType | undefined>(undefined);
@@ -506,6 +510,18 @@ Select any file to begin, or type a request below!`,
       }
       if (updates.openaiApiKey !== undefined) {
         setProviders((p) => ({ ...p, openai: { ...p.openai, apiKey: updates.openaiApiKey! } }));
+      }
+      if (updates.groqApiKey !== undefined) {
+        setProviders((p) => ({ ...p, groq: { ...p.groq, apiKey: updates.groqApiKey! } }));
+      }
+      if (updates.cerebrasApiKey !== undefined) {
+        setProviders((p) => ({ ...p, cerebras: { ...p.cerebras, apiKey: updates.cerebrasApiKey! } }));
+      }
+      if (updates.sambanovaApiKey !== undefined) {
+        setProviders((p) => ({ ...p, sambanova: { ...p.sambanova, apiKey: updates.sambanovaApiKey! } }));
+      }
+      if (updates.nvidiaApiKey !== undefined) {
+        setProviders((p) => ({ ...p, nvidia: { ...p.nvidia, apiKey: updates.nvidiaApiKey! } }));
       }
       return next;
     });

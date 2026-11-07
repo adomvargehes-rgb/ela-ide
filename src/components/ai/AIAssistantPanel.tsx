@@ -76,6 +76,10 @@ export default function AIAssistantPanel() {
             className="h-6 bg-zinc-900 border border-zinc-700/80 rounded px-1.5 text-[11px] text-zinc-300 outline-none"
           >
             <option value="gemini">Gemini</option>
+            <option value="groq">Groq (Free)</option>
+            <option value="cerebras">Cerebras (Free)</option>
+            <option value="sambanova">SambaNova (Free)</option>
+            <option value="nvidia">NVIDIA (Free)</option>
             <option value="deepseek">DeepSeek</option>
             <option value="openrouter">OpenRouter</option>
             <option value="openai">OpenAI</option>

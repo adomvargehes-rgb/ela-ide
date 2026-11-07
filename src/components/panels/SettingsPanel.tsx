@@ -120,8 +120,12 @@ export default function SettingsPanel() {
                   className="w-full h-8 bg-zinc-800 border border-zinc-700 rounded px-2 text-xs text-white outline-none focus:border-blue-500"
                 >
                   <option value="gemini">Google Gemini (Recommended for Multi-modal & Speed)</option>
+                  <option value="groq">Groq (Free Ultra-Fast Llama-3.3 70B & Gemma 2)</option>
+                  <option value="cerebras">Cerebras (Free Wafer-Scale ~2000 tok/sec Inference)</option>
+                  <option value="sambanova">SambaNova (Free SN40L Meta-Llama-3.3 70B & Qwen 2.5)</option>
+                  <option value="nvidia">NVIDIA NIM (Free Evaluation Nemotron & Llama 3.3)</option>
                   <option value="deepseek">DeepSeek (DeepSeek Coder / Reasoner)</option>
-                  <option value="openrouter">OpenRouter (Claude 3.5 Sonnet, GPT-4o, Llama 3.3)</option>
+                  <option value="openrouter">OpenRouter (Claude 3.5 Sonnet, GPT-4o, Free Models)</option>
                   <option value="openai">OpenAI / Custom Compatible Endpoint</option>
                   <option value="ollama">Ollama (Local Private Models)</option>
                 </select>

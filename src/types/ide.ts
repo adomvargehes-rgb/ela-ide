@@ -61,7 +61,11 @@ export type AIProviderId =
   | "deepseek" 
   | "openrouter" 
   | "ollama" 
-  | "openai";
+  | "openai"
+  | "groq"
+  | "cerebras"
+  | "sambanova"
+  | "nvidia";
 
 export interface AIProviderConfig {
   id: AIProviderId;
@@ -131,5 +135,9 @@ export interface IDESettings {
   ollamaEndpoint: string;
   openaiApiKey: string;
   openaiEndpoint: string;
+  groqApiKey: string;
+  cerebrasApiKey: string;
+  sambanovaApiKey: string;
+  nvidiaApiKey: string;
 }
 
